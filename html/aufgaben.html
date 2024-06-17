@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aufgaben - SuccessFlowCRM</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="/CRM/css/aufgaben.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+    <script src="/CRM/js/kendo-ui-license.js"></script>
+</head>
+<body>
+<header id="header">
+    <button id="menu-button" class="k-button k-primary">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div id="header-title">Aufgaben</div>
+    <i class="fas fa-home home-icon" id="home-icon"></i>
+</header>
+<div class="search-container">
+    <input type="text" id="search" placeholder="Suchen...">
+    <i class="fas fa-filter filter-icon" id="filter-icon"></i>
+</div>
+<div id="filter-popup">
+    <div id="daterangepicker"></div>
+    <button class="k-button" id="apply-filter">Filter anwenden</button>
+</div>
+<div id="grid-container">
+    <div id="grid"></div>
+</div>
+<div id="fab-container">
+    <a id="fab" href="#">
+        <i class="fas fa-plus"></i>
+    </a>
+</div>
+<div id="popup-menu" class="k-popup k-group k-reset" style="display:none;">
+    <ul>
+        <li><a href="/CRM/html/aktionen.html"><i class="fas fa-tasks"></i> Aktivitäten</a></li>
+        <li><a href="/CRM/html/aufgaben.html"><i class="fas fa-check-circle"></i> Aufgaben</a></li>
+        <li><a href="/CRM/html/anbahnungen.html"><i class="fas fa-user-plus"></i> Anbahnungen</a></li>
+        <li><a href="/CRM/html/kunden.html"><i class="fas fa-users"></i> Kunden</a></li>
+        <li><a href="/CRM/html/phonebook.html"><i class="fas fa-phone"></i> Telefonbuch</a></li>
+        <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Abmelden</a></li>
+    </ul>
+</div>
+<script id="template" type="text/x-kendo-template">
+    <div class="aktionen-grid"></div>
+</script>
+<script type="module" src="/CRM/js/aufgaben.js"></script>
+</body>
+</html>
