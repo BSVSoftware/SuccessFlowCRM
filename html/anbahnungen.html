@@ -6,22 +6,56 @@
     <title>Anbahnungen - SuccessFlowCRM</title>
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="/CRM/css/anbahnungen.css">
+    <link rel="stylesheet" href="../css/anbahnungen.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
-    <script src="/CRM/js/kendo-ui-license.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+    <script>
+        kendo.culture("de-DE");
+    </script>
 </head>
 <body>
 <header id="header">
     <div id="header-title">Anbahnungen</div>
+    <i class="fas fa-plus-circle new-anbahnung-icon" id="new-anbahnung-icon" title="Neue Anbahnung"></i>
     <i class="fas fa-home home-icon" id="home-icon"></i>
 </header>
 <div class="search-container">
     <input type="text" id="search" placeholder="Suchen...">
+    <div class="icon-container">
+        <i class="fas fa-filter filter-icon" id="filter-icon"></i>
+        <i class="fas fa-calendar-alt filter-icon" id="termin-filter-icon"></i>
+    </div>
+</div>
+<div id="filter-popup">
+    <div id="daterangepicker"></div>
+    <button id="apply-filter" class="k-button">Anwenden</button>
+</div>
+<div id="termin-filter-popup">
+    <div id="termin-daterangepicker"></div>
+    <button id="apply-termin-filter" class="k-button">Anwenden</button>
 </div>
 <div id="grid-container">
     <div id="grid"></div>
 </div>
-<script type="module" src="/CRM/js/anbahnungen.js?V=1.00"></script>
+<div id="fab-container">
+    <a id="fab" href="#">
+        <i class="fas fa-tasks"></i>
+    </a>
+</div>
+<div id="popup-menu" class="k-popup k-group k-reset" style="display:none;">
+    <ul>
+        <li><a href="../html/aktionen.html"><i class="fas fa-tasks"></i> Aktivitäten</a></li>
+        <li><a href="../html/aufgaben.html"><i class="fas fa-check-circle"></i> Aufgaben</a></li>
+        <li><a href="../html/anbahnungen.html"><i class="fas fa-user-plus"></i> Anbahnungen</a></li>
+        <li><a href="../html/kunden.html"><i class="fas fa-users"></i> Kunden</a></li>
+        <li><a href="../html/phonebook.html"><i class="fas fa-phone"></i> Telefonbuch</a></li>
+        <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Abmelden</a></li>
+    </ul>
+</div>
+<script id="template" type="text/x-kendo-template">
+    <div class='aufgaben-grid'></div>
+</script>
+<script type="module" src="../js/anbahnungen.js"></script>
 </body>
 </html>

@@ -24,45 +24,176 @@ body {
     font-size: 24px;
     font-weight: bold;
     margin-left: 20px;
+    flex-grow: 1;
 }
 
 .home-icon {
     font-size: 24px;
     color: #007bff;
     cursor: pointer;
-    margin-right: 20px;
+}
+
+#menu-button {
+    background-color: #d3d3d3;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
 }
 
 .search-container {
     width: 100%;
-    padding: 20px 5px;
+    padding: 10px 5px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
 }
 
 .search-container input {
     padding: 10px;
     font-size: 16px;
-    width: calc(100% - 10px);
+    width: 200px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
+.filter-icon {
+    font-size: 24px;
+    color: #007bff;
+    cursor: pointer;
+    margin-left: 10px;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 #grid-container {
-    width: calc(100% - 2px);
-    margin-left: 1px;
-}
-
-#grid {
     width: 100%;
-    max-width: 1200px;
+    padding: 10px;
 }
 
-.k-pager-wrap .k-pager-refresh {
-    display: inline-flex;
+#filter-popup {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000;
+    top: 80px;
+    right: 20px;
+}
+
+#filter-popup .k-button {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#fab-container {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1000;
+}
+
+#fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background-color: #007bff;
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    text-decoration: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+#popup-menu {
+    font-size: 14px;
+    padding: 10px;
+}
+
+#popup-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#popup-menu ul li {
+    margin: 10px 0;
+}
+
+#popup-menu ul li a {
+    text-decoration: none;
+    color: #333;
+    display: flex;
     align-items: center;
 }
 
-.k-pager-wrap .k-pager-refresh .k-link {
-    padding: 0;
+#popup-menu ul li a i {
+    margin-right: 10px;
+    color: #808080;
+}
+
+/* Add styles for the hyperlink in the grid */
+a.grid-link {
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a.grid-link:hover {
+    text-decoration: underline;
+}
+
+/* Allgemeine Stile für Symbolcontainer */
+.icon-container {
+    display: flex;
+    flex-direction: row; /* Symbole horizontal anordnen */
+    align-items: center; /* Symbole vertikal zentrieren */
+    justify-content: center; /* Optional: zentriert im Container */
+    gap: 10px; /* Horizontaler Abstand zwischen Symbolen */
+}
+
+/* Refresh-Icon-Stil */
+.refresh-icon {
+    font-size: 24px;
+    color: #007bff; /* Primärfarbe */
+    cursor: pointer;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.refresh-icon:hover {
+    color: #0056b3; /* Dunklere Farbe beim Hover */
+    transform: rotate(90deg); /* Dreht das Icon beim Hover */
+}
+
+.refresh-icon:active {
+    transform: rotate(180deg); /* Dreht das Icon beim Klicken */
+}
+
+/* Back-Icon-Stil */
+.back-icon {
+    font-size: 24px;
+    color: #007bff; /* Primärfarbe */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.back-icon:hover {
+    color: #0056b3;
+}
+
+.back-icon:active {
+    transform: scale(0.9); /* Leichter "Klick"-Effekt */
+}
+
+div.k-grid a.hyperlink {
+    color: blue !important;
+    text-decoration: underline !important;
 }

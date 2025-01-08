@@ -6,27 +6,73 @@
     <title>Aufgaben Details - SuccessFlowCRM</title>
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="/CRM/css/aufgaben_details.css">
+    <link rel="stylesheet" href="../css/aufgaben_details.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
 </head>
 <body>
 <header id="header">
-    <div id="header-title"></div>
-    <i class="fas fa-home home-icon" id="home-icon"></i>
+    <i class="fas fa-arrow-left back-icon" id="back-icon"></i>
+    <h1>Aufgabe Details</h1>
 </header>
-<div id="fab-container">
-    <button id="fab-items"></button>
-</div>
 <div id="details-container">
     <form id="details-form">
-        <div id="details"></div>
+        <div class="form-group">
+            <label for="kundenNr">Kunden Nr:</label>
+            <input type="text" id="kundenNr" readonly>
+        </div>
+        <div class="form-group">
+            <label for="kunde">Kunde:</label>
+            <input type="text" id="kunde" readonly>
+        </div>
+        <div class="form-group">
+            <label for="stichwort">Stichwort:</label>
+            <input type="text" id="stichwort">
+        </div>
+        <div class="form-group">
+            <label for="ansprechpartner">Ansprechpartner:</label>
+            <input type="text" id="ansprechpartner">
+        </div>
+        <div class="form-group">
+            <label for="email">E-Mail:</label>
+            <input type="email" id="email" >
+        </div>
+        <!-- Separate form-group for Multiline fields -->
+        <div class="form-group multiline-group">
+            <label for="fehlermeldung">Beschreibung:</label>
+            <textarea id="fehlermeldung" ></textarea>
+        </div>
+        <div class="form-group multiline-group">
+            <label for="behebung">Aufgaben:</label>
+            <textarea id="behebung" ></textarea>
+        </div>
+        <div class="form-group">
+            <label for="anbahnung">Anbahnung:</label>
+            <select id="anbahnung"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="aktuelleAktion">Aktuelle Aktion:</label>
+            <input type="text" id="aktuelleAktion" readonly>
+        </div>
+        <div class="form-group">
+            <label for="aktuellerStatus">Aktueller Status:</label>
+            <input type="text" id="aktuellerStatus" readonly>
+        </div>
+        <div class="form-group">
+            <label for="letzteAktionam">Letzte Aktion am:</label>
+            <input type="text" id="letzteAktionam" readonly>
+        </div>
+        <div class="button-group">
+            <!-- Buttons (speichern + löschen + erledigen) -->
+            <button type="button" id="save-btn" class="k-button k-primary">Speichern</button>
+            <button type="button" id="done-btn" class="k-button k-success">Erledigen</button>
+            <button type="button" id="delete-btn" class="k-button k-danger">Löschen</button>
+
+        </div>
     </form>
-    <div class="buttons">
-        <button id="save-button" class="k-button k-primary">Speichern</button>
-        <button id="cancel-button" class="k-button">Abbruch</button>
-    </div>
 </div>
-<script type="module" src="/CRM/js/aufgaben_details.js"></script>
+
+<script type="module" src="../js/aufgaben_details.js"></script>
 </body>
 </html>

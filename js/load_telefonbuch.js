@@ -1,10 +1,10 @@
-import { API_URL } from './app.js';
+import { API_URL,APP_RQ } from './app.js';
 import { openIndexedDB } from './indexedDB.js';
 
 export async function loadTelefonbuch() {
     try {
         const sid = localStorage.getItem('SID');
-        const response = await fetch(`${API_URL}saRequester&ARGUMENTS=-Agettelefonbuch`, {
+        const response = await fetch(`${API_URL}${APP_RQ}&ARGUMENTS=-Agettelefonbuch`, {
             headers: {
                 'Content-Type': 'application/json',
                 'SID': sid
@@ -54,7 +54,7 @@ export async function loadTelefonbuch() {
 
 function handleUnauthorized() {
     alert('Ihre Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein.');
-    window.location.href = '/CRM/html/login.html';
+    window.location.href = '../html/login.html';
 }
 
 function showErrorModal(message) {

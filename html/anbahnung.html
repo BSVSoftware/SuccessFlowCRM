@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anbahnung bearbeiten - SuccessFlowCRM</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
+    <link rel="stylesheet" href="../css/anbahnung.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <script>
+        kendo.culture("de-DE");
+    </script>
+    <style>
+        /* Felder für gewonnen/verloren zunächst verstecken */
+        #gewonnen-fields, #verloren-fields {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<header id="header">
+    <div id="header-title">Anbahnung bearbeiten</div>
+    <div id="back-button" class="back-icon">
+        <i class="fas fa-arrow-left"></i>
+    </div>
+</header>
+
+<div class="form-container">
+    <form id="anbahnung-form">
+        <!-- Status DropDown -->
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="Status"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="anbahnungNr">Anbahnung Nr</label>
+            <input type="text" id="anbahnungNr" name="AnbahnungNr" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="beschreibung">Beschreibung</label>
+            <input type="text" id="beschreibung" name="Beschreibung" maxlength="30" required>
+        </div>
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="erstelltam">Erstellt am (nur Anzeige)</label>
+                <input id="erstelltam" name="erstelltam" readonly>
+            </div>
+            <div class="form-group half-width">
+                <label for="besitzerKZ">Erstellt von (nur Anzeige)</label>
+                <input type="text" id="besitzerKZ" name="BesitzerKZ" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="statusgeschlossen">Status geschlossen</label>
+            <select id="statusgeschlossen" name="statusgeschlossen"></select>
+        </div>
+        <div class="form-group">
+            <label for="kunden-nr">Kunden Nr.</label>
+            <div style="display: flex; align-items: center;">
+                <input id="kunden-nr" name="KundenNr" required>
+                <button type="button" id="search-kunde-button" class="k-button" style="margin-left: 10px;">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <label for="kunde">Kunde</label>
+            <input type="text" id="kunde" name="Kunde" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="abschlussdatum">Abschlussdatum</label>
+            <input id="abschlussdatum" name="Abschlussdatum">
+        </div>
+
+        <div class="form-group">
+            <label for="wahrscheinlichkeit">Wahrscheinlichkeit (%)</label>
+            <input id="wahrscheinlichkeit" name="Wahrscheinlichkeit" required>
+        </div>
+
+        <!-- Nur-Anzeige Felder -->
+        <div class="form-group">
+            <label for="letzteTaetigkeitam">Letzte Tätigkeit am (nur Anzeige)</label>
+            <input id="letzteTaetigkeitam" name="letzteTaetigkeitam" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="letzteAktion">Letzte Aktion (nur Anzeige)</label>
+            <input type="text" id="letzteAktion" name="letzteAktion" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="terminDatum">Termin (nur Anzeige)</label>
+            <input id="terminDatum" name="TerminDatum" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="rating">Rating</label>
+            <select id="rating" name="RatingNr"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="umsatzPlan">UmsatzPlan</label>
+            <input id="umsatzPlan" name="UmsatzPlan">
+        </div>
+
+        <div class="form-group">
+            <label for="bruttonutzen">Bruttonutzen</label>
+            <input id="bruttonutzen" name="Bruttonutzen">
+        </div>
+
+        <div class="form-group">
+            <label for="umsatzGewichtet">UmsatzGewichtet (nur Anzeige)</label>
+            <input id="umsatzGewichtet" name="UmsatzGewichtet" readonly>
+        </div>
+
+        <!-- Felder für Statusgeschlossen = Gewonnen -->
+        <div id="gewonnen-fields">
+            <div class="form-group">
+                <label for="umsatzIst">erzielter Umsatz</label>
+                <input id="umsatzIst" name="UmsatzIst">
+            </div>
+            <div class="form-group">
+                <label for="abschlussdatumGewonnen">Abschlussdatum</label>
+                <input id="abschlussdatumGewonnen" name="AbschlussdatumGewonnen">
+            </div>
+            <div class="form-group">
+                <label for="GeschlossenVermerk">Vermerk</label>
+                <textarea id="GeschlossenVermerk" name="GeschlossenVermerk" rows="4"></textarea>
+            </div>
+        </div>
+
+        <!-- Felder für Statusgeschlossen = Verloren -->
+        <div id="verloren-fields">
+            <div class="form-group">
+                <label for="grund">Grund</label>
+                <select id="grund" name="Grundschluessel"></select>
+            </div>
+            <div class="form-group">
+                <label for="mitbewerber">Mitbewerber</label>
+                <select id="mitbewerber" name="MitbewerberNr"></select>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="k-button k-primary">Speichern</button>
+            <button type="button" class="k-button" id="cancel-button">Abbrechen</button>
+        </div>
+    </form>
+</div>
+<script type="module" src="../js/anbahnung.js"></script>
+</body>
+</html>

@@ -23,46 +23,44 @@ body {
 #header-title {
     font-size: 24px;
     font-weight: bold;
-    margin-left: 20px;
 }
 
-.home-icon {
+.back-icon {
     font-size: 24px;
     color: #007bff;
     cursor: pointer;
-    margin-right: 20px;
 }
 
-.search-container {
+#form-container {
     width: 100%;
-    padding: 20px 5px; /* 5px padding on left and right */
-    display: flex;
-    justify-content: center;
+    max-width: 600px;
+    margin: 20px 0;
 }
 
-.search-container input {
+#zahlung-form {
+    display: flex;
+    flex-direction: column;
+}
+
+#zahlung-form label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+#zahlung-form input {
+    margin-bottom: 20px;
     padding: 10px;
     font-size: 16px;
-    width: calc(100% - 10px); /* 5px padding on each side */
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-#grid-container {
-    width: calc(100% - 2px); /* 5px padding on each side */
-    margin-left: 1px;
-}
-
-#grid {
-    width: 100%;
-    max-width: 1200px;
-}
-
-.k-pager-wrap .k-pager-refresh {
-    display: inline-flex;
-    align-items: center;
-}
-
-.k-pager-wrap .k-pager-refresh .k-link {
-    padding: 0;
+#save-button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }

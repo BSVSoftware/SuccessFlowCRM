@@ -1,0 +1,13 @@
+/* drawer.css */
+
+#app-drawer {
+    /* Du kannst die Breite etc. anpassen */
+    width: 200px;
+    /* Falls du einen horizontalen Drawer brauchst, mode "bottom", etc. */
+}
+
+.drawer-link {
+    /* Zusätzliche Styling-Klassen */
+    font-weight: bold;
+    /* ... */
+}

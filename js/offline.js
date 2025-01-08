@@ -1,15 +1,15 @@
 const CACHE_NAME = 'successflowcrm-cache';
 const FILES_TO_CACHE = [
-    '/CRM/',
-    '/CRM/index.html',
-    '/CRM/html/login.html',
-    '/CRM/html/company.html',
-    '/CRM/html/menue.html',
-    '/CRM/css/styles.css',
-    '/CRM/js/app.js',
-    '/CRM/js/login.js',
-    '/CRM/js/menue.js',
-    '/CRM/js/offline.js',
+    '..//',
+    '../index.html',
+    '../html/login.html',
+    '../html/company.html',
+    '../html/menue.html',
+    '../css/styles.css',
+    '../js/app.js',
+    '../js/login.js',
+    '../js/menue.js',
+    '../js/offline.js',
 ];
 
 self.addEventListener('install', (event) => {

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verträge - SuccessFlowCRM</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../css/vertraege.css"> <!-- Angepasstes CSS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+    <script>
+        kendo.culture("de-DE");
+    </script>
+</head>
+<body>
+<header id="header">
+    <div id="header-title">Verträge</div>
+    <i class="fas fa-home home-icon" id="home-icon"></i>
+</header>
+
+<!-- Eingabefelder für VertragNr und KundenNr mit flexiblerer Struktur -->
+<div class="search-container">
+    <div class="search-input">
+        <input type="text" id="vertragNr" placeholder="VertragNr eingeben..." />
+        <input type="text" id="kundenNr" placeholder="KundenNr eingeben..." />
+    </div>
+    <button id="search-button" class="search-btn">
+        <i class="fas fa-search"></i> <!-- Such-Symbol -->
+        Suchen
+    </button>
+</div>
+
+<!-- Kendo Grid Container -->
+<div id="grid-container">
+    <div id="grid"></div>
+</div>
+
+<script type="module" src="../js/vertraege_dynamic.js"></script>
+</body>
+</html>

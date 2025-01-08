@@ -1,0 +1,97 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+#header {
+    width: 100%;
+    background-color: #e0f7e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#header-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.home-icon {
+    font-size: 24px;
+    color: #007bff;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.search-container {
+    width: 100%;
+    padding: 20px 5px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.search-input input {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    width: 48%; /* Zwei Felder pro Zeile */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-btn {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+#grid-container {
+    width: 100%;
+    max-width: 1200px; /* Maximale Breite des Grids */
+    overflow-x: auto;  /* Falls der Inhalt breiter wird, Scrollen ermöglichen */
+    padding: 10px;
+    box-sizing: border-box; /* Damit Padding die Breite nicht überschreitet */
+}
+
+.k-grid {
+    width: 100% !important; /* Grid nimmt die gesamte Breite ein */
+}
+
+.k-grid-header, .k-grid-content {
+    white-space: nowrap; /* Verhindert Zeilenumbruch innerhalb des Grids */
+}
+
+/* Responsiv für kleinere Bildschirme */
+@media (max-width: 768px) {
+    .search-input input {
+        width: 100%; /* Alle Felder untereinander */
+    }
+
+    #grid-container {
+        padding: 5px;
+    }
+}

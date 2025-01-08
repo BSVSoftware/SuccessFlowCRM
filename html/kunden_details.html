@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kunden Details - SuccessFlowCRM</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../css/kunden_details.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="../js/kendo-ui-license.js"></script>
+</head>
+<body>
+<header id="header">
+    <div id="header-title">Kunden Details</div>
+    <i class="fas fa-home home-icon" id="home-icon"></i>
+</header>
+<div id="details-container">
+    <form id="customer-form" class="k-form">
+        <fieldset>
+            <legend>Kundendaten</legend>
+            <div class="k-form-field">
+                <label for="KundenNr">Kunden Nr:</label>
+                <input type="text" id="KundenNr" name="KundenNr" class="k-textbox" readonly>
+            </div>
+            <div class="k-form-field">
+                <label for="Kunde">Kunde:</label>
+                <input type="text" id="Kunde" name="Kunde" class="k-textbox">
+            </div>
+            <div class="k-form-field">
+                <label for="Name1">Name 1:</label>
+                <input type="text" id="Name1" name="Name1" class="k-textbox">
+            </div>
+            <div class="k-form-field">
+                <label for="Name2">Name 2:</label>
+                <input type="text" id="Name2" name="Name2" class="k-textbox">
+            </div>
+            <div class="k-form-field">
+                <label for="Name3">Name 3:</label>
+                <input type="text" id="Name3" name="Name3" class="k-textbox">
+            </div>
+            <div class="k-form-field">
+                <label for="Strasse">Strasse:</label>
+                <input type="text" id="Strasse" name="Strasse" class="k-textbox">
+            </div>
+            <div class="k-form-field">
+                <label for="Plz">PLZ:</label>
+                <input type="text" id="Plz" name="Plz" class="k-textbox">
+            </div>
+            <div class="k-form-field">
+                <label for="Ort">Ort:</label>
+                <input type="text" id="Ort" name="Ort" class="k-textbox">
+            </div>
+            <div class="k-form-field">
+                <label for="Land">Land:</label>
+                <input type="text" id="Land" name="Land" class="k-textbox">
+            </div>
+            <div class="k-form-field">
+                <label for="TelefonNr">Telefon Nr:</label>
+                <input type="text" id="TelefonNr" name="TelefonNr" class="k-textbox">
+            </div>
+            <!-- Add other fields as needed -->
+            <div class="k-form-buttons">
+                <button type="submit" class="k-button k-primary" id="save-button">Save</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+<script type="module" src="../js/kunden_details.js"></script>
+</body>
+</html>

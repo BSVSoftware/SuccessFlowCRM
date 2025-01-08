@@ -1,13 +1,8 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f4f8;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh;
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 #header {
@@ -20,66 +15,90 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#header-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-left: 20px;
+header h1 {
+    flex: 1;
+    margin: 0;
+    font-size: 20px;
+    text-align: center;
 }
 
-.home-icon {
-    font-size: 24px;
+.back-icon {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
     color: #007bff;
     cursor: pointer;
     margin-right: 20px;
 }
 
+.back-icon i {
+    margin-right: 8px;
+    font-size: 20px;
+}
+
 #details-container {
-    width: 100%;
-    max-width: 800px;
-    margin-top: 20px;
-    background-color: white;
+    display: flex;
+    justify-content: center;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#details-form {
+    max-width: 640px;
+    width: 100%;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
 }
 
 .form-group {
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
 }
 
-.form-group label {
-    display: block;
+label {
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-.form-group input {
-    width: calc(100% - 20px);
-    padding: 10px;
-    font-size: 16px;
+input[type="text"], input[type="email"], textarea {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
 }
 
-.buttons {
+/* Styling for multiline-group */
+.form-group.multiline-group textarea {
+    height: 150px; /* Höhe für 6 Zeilen */
+    width: 100%;
+    max-width: 640px;
+    resize: none;
+    background-color: #f9f9f9;
+}
+
+.button-group {
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
 }
 
-.k-button {
-    padding: 10px 20px;
-    font-size: 16px;
-}
-
-.k-button.k-primary {
-    background-color: #4caf50;
+#save-button {
+    background-color: #2d89ef;
+    border-color: #2d89ef;
     color: white;
-    border: none;
 }
 
-#fab-container {
-    position: absolute;
-    top: 20px;
-    left: 20px;
+#cancel-button {
+    background-color: #f44336;
+    border-color: #f44336;
+    color: white;
+}
+.k-combobox,
+.k-dropdown {
+    width: 80% !important;  /* 80% des Containers */
+    max-width: 100%;
 }

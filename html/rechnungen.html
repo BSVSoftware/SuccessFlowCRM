@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rechnungen - SuccessFlowCRM</title>
+  <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1109/styles/kendo.default-v2.min.css"/>
+  <link rel="stylesheet" href="../css/rechnungen.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2021.3.1109/js/kendo.all.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2021.3.1109/js/cultures/kendo.culture.de-DE.min.js"></script>
+  <script src="https://kendo.cdn.telerik.com/2021.3.1109/js/messages/kendo.messages.de-DE.min.js"></script>
+  <script type="module" src="../js/rechnungen.js"></script>
+</head>
+<body>
+<header id="header">
+  <div id="menu-icon">
+    <i class="fas fa-bars"></i>
+  </div>
+  <div id="header-title">Rechnungen</div>
+  <div id="header-buttons">
+    <i class="fas fa-home" id="home-icon"></i>
+    <i class="fas fa-filter" id="filter-icon"></i>
+    <i class="fas fa-arrow-left" id="back-icon"></i>
+  </div>
+</header>
+<div class="search-container">
+  <input type="text" id="search" placeholder="Suchen...">
+</div>
+<div id="grid-container">
+  <div id="grid"></div>
+</div>
+<div id="fab-container">
+  <a id="fab" href="#">
+    <i class="fas fa-plus"></i>
+  </a>
+</div>
+</body>
+</html>

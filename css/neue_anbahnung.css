@@ -1,0 +1,144 @@
+/* Allgemeine Stile */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Header-Stile */
+#header {
+    width: 100%;
+    background-color: #f0f8ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#header-title {
+    font-size: 24px;
+    font-weight: bold;
+    flex-grow: 1;
+    color: #333;
+}
+
+.back-icon {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    color: #007bff;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.back-icon i {
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+.back-icon:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Container für Details */
+#details-container {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 20px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Formulargruppen */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fdfdfd;
+}
+
+.form-group input[type="number"] {
+    -moz-appearance: textfield; /* Entferne die Pfeile in Firefox */
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.k-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.k-button.k-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.k-button.k-primary:hover {
+    background-color: #0056b3;
+}
+
+.k-button {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.k-button:hover {
+    background-color: #ddd;
+    color: #000;
+}
+
+/* Responsive Anpassungen */
+@media (max-width: 768px) {
+    #details-container {
+        padding: 15px;
+    }
+
+    .buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+/* Beschreibung Feld */
+#beschreibung {
+    width: 100%; /* Breite des Felds */
+    padding: 10px; /* Innenabstand für bessere Lesbarkeit */
+    font-size: 16px; /* Einheitliche Schriftgröße */
+    border: 1px solid #ccc; /* Rahmen */
+    border-radius: 5px; /* Abgerundete Ecken */
+    background-color: #fdfdfd; /* Hintergrundfarbe */
+    box-sizing: border-box; /* Padding in die Breite einrechnen */
+}
+

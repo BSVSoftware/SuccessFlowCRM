@@ -12,7 +12,7 @@ async function loadData() {
 }
 
 async function getVertriebler(UID, SID) {
-    const url = `${API_URL}saRequester&ARGUMENTS=-Agetvertriebler`;
+    const url = `${API_URL}${APP_RQ}&ARGUMENTS=-Agetvertriebler`;
     const response = await fetch(url, {
         method: 'GET',
         headers: new Headers({
@@ -79,7 +79,7 @@ async function storeVertrieblerInIndexedDB(vertriebler) {
 
 function openIndexedDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('SuccessFlowCRM', 1);
+        const request = indexedDB.open('SuccessFlowCRM', 2);
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains('vertriebler')) {

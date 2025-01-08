@@ -1,1 +1,1 @@
-importScripts('/CRM/js/offline.js');
+importScripts('../js/offline.js');

@@ -23,14 +23,13 @@ body {
 #header-title {
     font-size: 24px;
     font-weight: bold;
-    margin-left: 20px;
+    flex: 1;
 }
-
-.home-icon {
+.home-icon, .back-icon {
     font-size: 24px;
     color: #007bff;
     cursor: pointer;
-    margin-right: 20px;
+    margin-left: 10px;
 }
 
 .search-container {
@@ -46,6 +45,13 @@ body {
     width: calc(100% - 10px);
     border: 1px solid #ccc;
     border-radius: 5px;
+}
+
+.search-container .fa-search{
+    font-size: 24px;
+    color: #007bff;
+    cursor: pointer;
+    margin-left: 10px;
 }
 
 #grid-container {
@@ -65,4 +71,15 @@ body {
 
 .k-pager-wrap .k-pager-refresh .k-link {
     padding: 0;
+}
+
+#fab-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.text-right {
+    text-align: right;
 }

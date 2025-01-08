@@ -1,167 +1,347 @@
-import { API_URL, APP_ID } from './app.js';
+import { API_URL,APP_RQ } from './app.js';
+import { fetchAktionenData } from './fetch_aktionen.js';
 import { loadAktionen } from './load_aktionen.js';
+import { openIndexedDB } from './indexedDB.js';
 
-$(document).ready(function () {
-    const fetchAktionenData = async () => {
+/**
+ * Höhe für das Grid dynamisch berechnen
+ */
+function calculateGridHeight() {
+    const windowHeight = $(window).height();
+    const headerHeight = $('#header').outerHeight(true);
+    const searchContainerHeight = $('.search-container').outerHeight(true);
+    return windowHeight - headerHeight - searchContainerHeight - 30;
+}
+
+/**
+ * Initialisiert oder aktualisiert das Kendo-Grid für Aktionen
+ */
+async function initializeGrid(aktionenData = null) {
+    if (!aktionenData) {
+        // Falls keine Daten als Parameter -> aus IndexedDB/REST laden
+        aktionenData = await fetchAktionenData();
+    }
+
+    // TerminDatum, TerminUhrzeit ggf. parsen
+    aktionenData = aktionenData.map(entry => {
+        if (entry.TerminDatum) {
+            entry.TerminDatum = kendo.parseDate(entry.TerminDatum, "dd.MM.yyyy");
+        }
+        if (entry.TerminUhrzeit) {
+            // parseDate("HH:mm") => Zeitformat
+            entry.TerminUhrzeit = kendo.parseDate(entry.TerminUhrzeit, "HH:mm");
+        }
+        return entry;
+    });
+
+    const existingGrid = $("#grid").data("kendoGrid");
+    if (existingGrid) {
+        // Grid schon vorhanden => Daten aktualisieren
+        existingGrid.dataSource.data(aktionenData);
+        existingGrid.refresh();
+        return;
+    }
+
+    // Erzeugen des Kendo-Grids
+    $("#grid").kendoGrid({
+        dataSource: {
+            data: aktionenData,
+            pageSize: 50,
+            schema: {
+                model: {
+                    fields: {
+                        AktionNr:      { type: "number" },
+                        TerminDatum:   { type: "date" },
+                        TerminUhrzeit: { type: "date" },
+                        Kunde:         { type: "string" },
+                        Stichwort:     { type: "string" },
+                        Beschreibung:  { type: "string" },
+                        externeInfo:   { type: "string" },
+                        erledigt:      { type: "boolean" },
+                        AufgabenNr:    { type: "number" }
+                    }
+                }
+            },
+            sort: { field: "AktionNr", dir: "desc" }
+        },
+        height: calculateGridHeight(),
+        scrollable: true,
+        pageable: true,
+        sortable: true,
+        filterable: true,
+        groupable: {
+            messages: {
+                empty: "Ziehen Sie eine Spaltenüberschrift hierher, um nach dieser Spalte zu gruppieren"
+            }
+        },
+        detailTemplate: `
+            <div class="details-container">
+                <h4>Zugehörige Aufgabe</h4>
+                <div class="aufgabe-grid"></div>
+            </div>
+        `,
+        detailInit: async function (e) {
+            // Ggf. verknüpfte Aufgabe abrufen
+            const aufgabeNr = e.data.AufgabenNr;
+            if (aufgabeNr) {
+                const aufgabeData = await fetchAufgabeByNr(aufgabeNr);
+                if (aufgabeData) {
+                    $("<div/>").appendTo(e.detailCell.find(".aufgabe-grid")).kendoGrid({
+                        dataSource: {
+                            data: [aufgabeData],
+                            schema: {
+                                model: {
+                                    fields: {
+                                        AufgabenNr:   { type: "number" },
+                                        Stichwort:    { type: "string" },
+                                        Beschreibung: { type: "string" },
+                                        Termin:       { type: "date" }
+                                    }
+                                }
+                            }
+                        },
+                        scrollable: true,
+                        sortable: true,
+                        columns: [
+                            {
+                                field: "AufgabenNr",
+                                title: "AufgabenNr",
+                                width: 100,
+                                template: function (dataItem) {
+                                    return `
+                                        <a href="../html/aufgaben.html"
+                                           class="hyperlink"
+                                           onclick="setAufgabenNrFilter(${dataItem.AufgabenNr})">
+                                           ${dataItem.AufgabenNr}
+                                        </a>`;
+                                }
+                            },
+                            { field: "Stichwort",    title: "Stichwort",    width: 150 },
+                            { field: "Beschreibung", title: "Beschreibung", width: 300 },
+                            { field: "Termin",       title: "Termin",       width: 100, format: "{0:dd.MM.yyyy}" }
+                        ]
+                    });
+                } else {
+                    e.detailCell.find(".aufgabe-grid")
+                        .html("<div class='error'>Keine zugehörige Aufgabe gefunden.</div>");
+                }
+            } else {
+                e.detailCell.find(".aufgabe-grid")
+                    .html("<div class='error'>Keine AufgabenNr zugeordnet.</div>");
+            }
+        },
+        columns: [
+            // 1) Neue Spalte: "Erledigt" (Button)
+            {
+                title: "",
+                width: 60,
+                template: `
+                    <button class='k-button k-success done-btn'>
+                       ...
+                    </button>
+                `
+            },
+            // 2) Restliche Spalten
+            { field: "AktionNr",     title: "Aktion Nr",    width: 100, sortable: true },
+            { field: "TerminDatum",  title: "Termin Datum", width: 120, format: "{0:dd.MM.yyyy}" },
+            { field: "TerminUhrzeit",title: "Termin Zeit",  width:  80, format: "{0:HH:mm}" },
+            { field: "Kunde",        title: "Kunde",        width: 150 },
+            { field: "Stichwort",    title: "Stichwort",    width: 250 },
+            { field: "Beschreibung", title: "Beschreibung", width: 300 },
+            {
+                field: "externeInfo",
+                title: "Externe Info",
+                width: 300,
+                template: dataItem => `
+                    <div style="max-height:5em;overflow-y:auto;">
+                        ${dataItem.externeInfo || ""}
+                    </div>
+                `
+            },
+            {
+                field: "erledigt",
+                title: "Erledigt (Flag)",
+                width: 80,
+                template: '<input type="checkbox" #= erledigt ? "checked" : "" # disabled />'
+            }
+        ],
+        noRecords: {
+            template: "Keine Daten verfügbar"
+        },
+        dataBound: function(e) {
+            // "Erledigt?"-Button-Handler
+            const grid = e.sender;
+            grid.tbody.find(".done-btn").on("click", function(evt) {
+                const tr = $(evt.target).closest("tr");
+                const dataItem = grid.dataItem(tr);
+
+                if (!dataItem || !dataItem.AktionNr) {
+                    alert("Fehler: Keine gültige AktionNr gefunden.");
+                    return;
+                }
+
+                // 1) currentAktionNr im localStorage
+                localStorage.setItem("currentAktionNr", dataItem.AktionNr);
+
+                // 2) Weiterleitung zur "aktion_erledigen.html"
+                window.location.href = "../html/aktion_erledigen.html";
+            });
+        }
+    });
+}
+
+/**
+ * Lädt eine Aufgabe aus IndexedDB (ObjectStore 'aufgaben') anhand der AufgabenNr
+ */
+export async function fetchAufgabeByNr(aufgabeNr) {
+    try {
         const db = await openIndexedDB();
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction(['aktionen'], 'readonly');
-            const store = transaction.objectStore('aktionen');
-            const request = store.getAll();
+            const transaction = db.transaction(["aufgaben"], "readonly");
+            const store = transaction.objectStore("aufgaben");
+            const index = store.index("AufgabenNr");
+            const request = index.get(aufgabeNr);
 
             request.onsuccess = () => {
-                const result = request.result.map(entry => {
-                    if (entry.erstelltam) entry.erstelltam = new Date(entry.erstelltam).toLocaleDateString('de-DE');
-                    if (entry.erledigtam) entry.erledigtam = new Date(entry.erledigtam).toLocaleDateString('de-DE');
-                    if (entry.TerminDatum) entry.TerminDatum = new Date(entry.TerminDatum).toLocaleDateString('de-DE');
-                    return entry;
-                });
-                resolve(result);
-            };
-            request.onerror = (event) => {
-                reject(event.target.error);
-            };
-        });
-    };
-
-    const openIndexedDB = () => {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open('SuccessFlowCRM', 1);
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
-                if (!db.objectStoreNames.contains('aktionen')) {
-                    db.createObjectStore('aktionen', { keyPath: 'AktionNr' });
+                if (request.result) {
+                    const result = {
+                        AufgabenNr:   request.result.AufgabenNr,
+                        Stichwort:    request.result.Stichwort,
+                        Beschreibung: request.result.Beschreibung,
+                        Termin:       request.result.Termin
+                    };
+                    resolve(result);
+                } else {
+                    console.warn(`Aufgabe ${aufgabeNr} nicht gefunden in IndexedDB.`);
+                    resolve(null);
                 }
             };
-            request.onsuccess = (event) => resolve(event.target.result);
-            request.onerror = (event) => reject(event.target.error);
+            request.onerror = e => reject(e.target.error);
         });
-    };
+    } catch (error) {
+        console.error("Fehler bei fetchAufgabeByNr:", error);
+        return null;
+    }
+}
 
-    const initializeGrid = async () => {
-        const aktionenData = await fetchAktionenData();
+/**
+ * Löscht das 'aktionen'-ObjectStore und lädt erneut aus REST,
+ * dann aktualisiert Grid
+ */
+async function refreshData() {
+    try {
+        console.log("Aktionen neu laden...");
 
-        $("#grid").kendoGrid({
-            dataSource: {
-                data: aktionenData,
-                pageSize: 10,
-                schema: {
-                    model: {
-                        fields: {
-                            AktionNr: { type: "number" },
-                            AufgabenNr: { type: "number" },
-                            erstelltam: { type: "date" },
-                            erstelltum: { type: "string" },
-                            erstelltvon: { type: "string" },
-                            Kuerzel: { type: "string" },
-                            Aktion: { type: "string" },
-                            Beschreibung: { type: "string" },
-                            neuerStatus: { type: "string" },
-                            externeInfo: { type: "string" },
-                            interneInfo: { type: "string" },
-                            erledigt: { type: "boolean" },
-                            erledigtam: { type: "date" },
-                            erledigtum: { type: "string" },
-                            Folgestatus: { type: "string" },
-                            TerminDatum: { type: "date" },
-                            TerminUhrzeit: { type: "string" },
-                            TerminDauer: { type: "string" },
-                            Kunde: { type: "string" },
-                            Kontaktperson: { type: "string" },
-                            Stichwort: { type: "string" },
-                            EMail: { type: "string" }
-                        }
-                    }
-                },
-                filter: {
-                    logic: "or",
-                    filters: []
-                }
-            },
-            pageable: {
-                refresh: true,
-                pageSizes: [5, 10, 20, 100, 500],
-                buttonCount: 5
-            },
-            groupable: true,
-            sortable: true,
-            filterable: true,
-            scrollable: true,
-            resizable: true,
-            reorderable: true,
-            columns: [
-                { field: "AktionNr", title: "Aktion Nr", width: "150px" },
-                { field: "AufgabenNr", title: "Aufgaben Nr", width: "150px" },
-                { field: "erstelltam", title: "Erstellt am", width: "150px" },
-                { field: "erstelltum", title: "Erstellt um", width: "150px" },
-                { field: "erstelltvon", title: "Erstellt von", width: "150px" },
-                { field: "Kuerzel", title: "Kürzel", width: "150px" },
-                { field: "Aktion", title: "Aktion", width: "150px" },
-                { field: "Beschreibung", title: "Beschreibung", width: "150px" },
-                { field: "neuerStatus", title: "Neuer Status", width: "150px" },
-                { field: "TerminDatum", title: "Termin Datum", width: "150px" }
-            ],
-            detailTemplate: kendo.template(
-                "<div class='detail-view'>" +
-                "<p><strong>Aktion Nr:</strong> #: AktionNr #</p>" +
-                "<p><strong>Aufgaben Nr:</strong> #: AufgabenNr #</p>" +
-                "<p><strong>Erstellt am:</strong> #: erstelltam #</p>" +
-                "<p><strong>Erstellt um:</strong> #: erstelltum #</p>" +
-                "<p><strong>Erstellt von:</strong> #: erstelltvon #</p>" +
-                "<p><strong>Kürzel:</strong> #: Kuerzel #</p>" +
-                "<p><strong>Aktion:</strong> #: Aktion #</p>" +
-                "<p><strong>Beschreibung:</strong> #: Beschreibung #</p>" +
-                "<p><strong>Neuer Status:</strong> #: neuerStatus #</p>" +
-                "<p><strong>Externe Info:</strong> #: externeInfo #</p>" +
-                "<p><strong>Interne Info:</strong> #: interneInfo #</p>" +
-                "<p><strong>Erledigt:</strong> #: erledigt #</p>" +
-                "<p><strong>Erledigt am:</strong> #: erledigtam #</p>" +
-                "<p><strong>Erledigt um:</strong> #: erledigtum #</p>" +
-                "<p><strong>Folgestatus:</strong> #: Folgestatus #</p>" +
-                "<p><strong>Termin Datum:</strong> #: TerminDatum #</p>" +
-                "<p><strong>Termin Uhrzeit:</strong> #: TerminUhrzeit #</p>" +
-                "<p><strong>Termin Dauer:</strong> #: TerminDauer #</p>" +
-                "<p><strong>Kunde:</strong> #: Kunde #</p>" +
-                "<p><strong>Kontaktperson:</strong> #: Kontaktperson #</p>" +
-                "<p><strong>Stichwort:</strong> #: Stichwort #</p>" +
-                "<p><strong>E-Mail:</strong> #: EMail #</p>" +
-                "</div>"
-            ),
-            detailInit: function (e) {
-                e.detailRow.find(".detail-view").show();
-            },
-            noRecords: {
-                template: "Keine Daten verfügbar"
-            }
-        });
+        const db = await openIndexedDB();
+        await clearObjectStore(db, 'aktionen');
 
-        // Add event listener for the refresh button in the pager
-        $(".k-pager-refresh").on("click", async () => {
-            await loadAktionen();
-            const updatedData = await fetchAktionenData();
-            const grid = $("#grid").data("kendoGrid");
-            grid.dataSource.data(updatedData);
-        });
+        await loadAktionen();                // REST -> IndexedDB
+        const refreshed = await fetchAktionenData(); // neu aus IndexedDB
+        const grid = $("#grid").data("kendoGrid");
+        if (grid) {
+            grid.dataSource.data(refreshed);
+            grid.refresh();
+        }
+        alert("Aktionen aktualisiert.");
+    } catch (error) {
+        console.error("Fehler bei refreshData:", error);
+        alert("Fehler bei der Aktualisierung: " + error.message);
+    }
+}
 
-        $("#search").on("input", function () {
-            const value = $(this).val();
-            const grid = $("#grid").data("kendoGrid");
-            grid.dataSource.filter({
-                logic: "or",
-                filters: [
-                    { field: "AktionNr", operator: "contains", value: value },
-                    { field: "AufgabenNr", operator: "contains", value: value },
-                    { field: "erstelltam", operator: "contains", value: value },
-                    { field: "erstelltvon", operator: "contains", value: value },
-                    { field: "Kuerzel", operator: "contains", value: value }
-                ]
-            });
-        });
-    };
+function clearObjectStore(db, storeName) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction([storeName], 'readwrite');
+        const store = tx.objectStore(storeName);
+        const clearReq = store.clear();
+        clearReq.onsuccess = () => resolve();
+        clearReq.onerror   = e => reject(e.target.error);
+    });
+}
 
-    initializeGrid();
+$(document).ready(async function () {
+    kendo.culture("de-DE");
 
+    // Grid initialisieren
+    await initializeGrid();
+
+    // DateRangePicker
+    $("#daterangepicker").kendoDateRangePicker({ format: "dd.MM.yyyy" });
+
+    // FAB -> Neue Aktion
+    document.getElementById("fab").addEventListener("click", function () {
+        window.location.href = "../html/aktion.html";
+    });
+
+    // Filter-Popup
+    $("#filter-icon").on("click", function () {
+        $("#filter-popup").toggle();
+    });
+    $("#apply-filter").on("click", function () {
+        $("#filter-popup").hide();
+        filterGrid();
+    });
+    $("#filter-popup").kendoPopup({
+        anchor: "#filter-icon",
+        position: "bottom left"
+    });
+
+    // Refresh-Button
+    document.getElementById("refresh-button").addEventListener("click", async () => {
+        await refreshData();
+    });
+
+    // Back-Button
+    document.getElementById("back-button").addEventListener("click", () => {
+        window.history.back();
+    });
+
+    // Home-Icon
     document.getElementById('home-icon').addEventListener('click', () => {
-        window.location.href = '/CRM/html/menue.html';
+        console.log("click");
+        window.location.href = '../html/menue.html';
+    });
+
+    // Popup-Menü
+    $("#menu-button").kendoButton({
+        click: function () {
+            $("#popup-menu").kendoPopup({
+                anchor: "#menu-button",
+                position: "bottom left",
+                collision: "fit flip"
+            }).data("kendoPopup").toggle();
+        }
     });
 });
+
+/**
+ * Filtert das Grid via DateRangePicker nach TerminDatum
+ */
+function filterGrid() {
+    const dateRangePicker = $("#daterangepicker").data("kendoDateRangePicker");
+    const range = dateRangePicker.range();
+    if (range && range.start && range.end) {
+        const startDate = kendo.parseDate(range.start, "dd.MM.yyyy");
+        const endDate   = kendo.parseDate(range.end,   "dd.MM.yyyy");
+        if (!startDate || !endDate) return;
+
+        const grid = $("#grid").data("kendoGrid");
+        grid.dataSource.filter({
+            logic: "and",
+            filters: [
+                { field: "TerminDatum", operator: "gte", value: startDate },
+                { field: "TerminDatum", operator: "lte", value: endDate }
+            ]
+        });
+        grid.dataSource.read();
+    } else {
+        const grid = $("#grid").data("kendoGrid");
+        grid.dataSource.filter({});
+        grid.refresh();
+    }
+}
+
+// Hilfsfunktion für das Template: Speichert die AufgabenNr
+window.setAufgabenNrFilter = function (aufgabenNr) {
+    localStorage.setItem("currentAufgabenNr", aufgabenNr);
+};

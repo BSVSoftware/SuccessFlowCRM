@@ -1,17 +1,9 @@
-import { API_URL } from './app.js';
+import { API_URL,APP_RQ } from './app.js';
 
-function parseDate(dateString) {
-    if (dateString) {
-        const [day, month, year] = dateString.split('.').map(Number);
-        return new Date(year, month - 1, day); // Monat ist nullbasiert
-    }
-    return null;
-}
-
-export async function loadKunden() {
+export async function loadKontaktpersonen() {
     try {
         const sid = localStorage.getItem('SID');
-        const response = await fetch(`${API_URL}saRequester&ARGUMENTS=-Agetkunden`, {
+        const response = await fetch(`${API_URL}${APP_RQ}&ARGUMENTS=-Agetkontaktpersonen`, {
             headers: {
                 'Content-Type': 'application/json',
                 'SID': sid
@@ -24,26 +16,24 @@ export async function loadKunden() {
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const kundenData = await response.json();
+        const kontaktpersonenData = await response.json();
         const db = await openIndexedDB();
 
         return new Promise((resolve, reject) => {
-            const transaction = db.transaction(['kunden'], 'readwrite');
-            const store = transaction.objectStore('kunden');
+            const transaction = db.transaction(['kontaktpersonen'], 'readwrite');
+            const store = transaction.objectStore('kontaktpersonen');
 
-            kundenData.forEach(entry => {
+            kontaktpersonenData.forEach(entry => {
                 Object.keys(entry).forEach(key => {
                     if (entry[key] === null) {
                         entry[key] = '';
-                    } else if (key.endsWith('am') && entry[key]) {
-                        entry[key] = parseDate(entry[key]).toISOString();
                     }
                 });
                 const request = store.put(entry);
 
                 request.onerror = (event) => {
-                    console.error('Error storing kunden data:', event.target.error);
-                    showErrorModal('Error storing kunden data: ' + event.target.error.message);
+                    console.error('Error storing kontaktpersonen data:', event.target.error);
+                    showErrorModal('Error storing kontaktpersonen data: ' + event.target.error.message);
                     reject(event.target.error);
                 };
             });
@@ -56,18 +46,19 @@ export async function loadKunden() {
             };
         });
     } catch (error) {
-        console.error('Error loading kunden data:', error);
-        showErrorModal('Error loading kunden data: ' + error.message);
+        console.error('Error loading kontaktpersonen data:', error);
+        showErrorModal('Error loading kontaktpersonen data: ' + error.message);
     }
 }
 
 function openIndexedDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('SuccessFlowCRM', 1);
+        const request = indexedDB.open('SuccessFlowCRM', 2);
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
-            if (!db.objectStoreNames.contains('kunden')) {
-                db.createObjectStore('kunden', { keyPath: 'KundenNr' });
+            if (!db.objectStoreNames.contains('kontaktpersonen')) {
+                const store = db.createObjectStore('kontaktpersonen', { keyPath: 'PersonNr' });
+                store.createIndex('KundenNr', 'KundenNr', { unique: false });
             }
         };
         request.onsuccess = (event) => resolve(event.target.result);
@@ -81,7 +72,7 @@ function openIndexedDB() {
 
 function handleUnauthorized() {
     alert('Ihre Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein.');
-    window.location.href = '/CRM/html/login.html';
+    window.location.href = '../html/login.html';
 }
 
 function showErrorModal(message) {

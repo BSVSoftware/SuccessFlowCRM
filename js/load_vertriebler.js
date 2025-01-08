@@ -1,15 +1,16 @@
-import { API_URL } from './app.js';
+import { API_URL,APP_RQ } from './app.js';
 import { openIndexedDB } from './indexedDB.js';
 
 export async function loadVertriebler() {
     try {
         const sid = localStorage.getItem('SID');
-        const response = await fetch(`${API_URL}saRequester&ARGUMENTS=-Agetvertriebler`, {
+        const response = await fetch(`${API_URL}${APP_RQ}&ARGUMENTS=-Agetvertriebler`, {
             headers: {
                 'Content-Type': 'application/json',
                 'SID': sid
             }
         });
+
         if (!response.ok) {
             if (response.status === 401) {
                 handleUnauthorized();
@@ -17,6 +18,7 @@ export async function loadVertriebler() {
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+
         const vertrieblerData = await response.json();
         const db = await openIndexedDB();
 
@@ -25,36 +27,51 @@ export async function loadVertriebler() {
             const store = transaction.objectStore('vertriebler');
 
             vertrieblerData.forEach(entry => {
+                // Bereinigen der Daten
+                if (!entry.MitarbNr) {
+                    console.warn('Eintrag ohne MitarbeiterNr übersprungen:', entry);
+                    return; // Überspringen fehlerhafter Einträge
+                }
+
+                // Nullwerte durch leere Strings ersetzen
                 Object.keys(entry).forEach(key => {
                     if (entry[key] === null) {
                         entry[key] = '';
                     }
                 });
-                const request = store.put(entry);
+
+                // Speichern in IndexedDB
+                const request = store.put({
+                    MitarbeiterNr: entry.MitarbNr,
+                    Kuerzel: entry.Kuerzel,
+                    Name: entry.Name,
+                    EMail: entry.EMail,
+                    Benutzer: entry.Benutzer,
+                    aktuell: entry.aktuell,
+                    Warteraum: entry.Warteraum
+                });
 
                 request.onerror = (event) => {
-                    console.error('Error storing vertriebler data:', event.target.error);
-                    showErrorModal('Error storing vertriebler data: ' + event.target.error.message);
+                    console.error('Fehler beim Speichern der Vertriebler-Daten:', event.target.error);
                     reject(event.target.error);
                 };
             });
 
             transaction.oncomplete = () => resolve();
             transaction.onerror = (event) => {
-                console.error('Transaction error:', event.target.error);
-                showErrorModal('Transaction error: ' + event.target.error.message);
+                console.error('Transaktionsfehler:', event.target.error);
                 reject(event.target.error);
             };
         });
     } catch (error) {
-        console.error('Error loading vertriebler data:', error);
-        showErrorModal('Error loading vertriebler data: ' + error.message);
+        console.error('Fehler beim Laden der Vertriebler-Daten:', error);
+        showErrorModal('Fehler beim Laden der Vertriebler-Daten: ' + error.message);
     }
 }
 
 function handleUnauthorized() {
     alert('Ihre Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein.');
-    window.location.href = '/CRM/html/login.html';
+    window.location.href = '../html/login.html';
 }
 
 function showErrorModal(message) {
@@ -78,7 +95,7 @@ function showErrorModal(message) {
     messageElement.textContent = message;
 
     const closeButton = document.createElement('button');
-    closeButton.textContent = 'Close';
+    closeButton.textContent = 'Schließen';
     closeButton.addEventListener('click', () => {
         modal.remove();
     });

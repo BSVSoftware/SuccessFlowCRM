@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+#header {
+    width: 100%;
+    background-color: #e0f7e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#header-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.home-icon {
+    font-size: 24px;
+    color: #1e88e5;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.search-container {
+    width: 100%;
+    padding: 20px 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-input {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px;
+}
+
+.search-input input {
+    padding: 10px;
+    font-size: 16px;
+    width: 45%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.search-btn {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: #1e88e5;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-btn i {
+    margin-right: 5px;
+}
+
+#grid-container {
+    width: calc(100% - 2px);
+    margin-left: 1px;
+    margin-top: 20px;
+}
+
+#grid {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.k-pager-wrap .k-pager-refresh {
+    display: inline-flex;
+    align-items: center;
+}
+
+.k-pager-wrap .k-pager-refresh .k-link {
+    padding: 0;
+}
+
+.contract-details {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-left: 4px solid #1e88e5;
+}
+
+.k-grid .k-detail-row {
+    background-color: #fafafa;
+}
+
+.text-right {
+    text-align: right;
+}

@@ -27,10 +27,11 @@ body {
     flex-grow: 1;
 }
 
-.home-icon {
+.home-icon, .back-icon {
     font-size: 24px;
     color: #007bff;
     cursor: pointer;
+    margin-left: 10px;
 }
 
 #menu-button {
@@ -139,3 +140,34 @@ body {
     margin-right: 10px;
     color: #808080;
 }
+.k-grid .aufgabe-link {
+    color: #007bff;  /* Farbe des Links */
+    text-decoration: none;  /* Keine Unterstreichung */
+    display: inline-block;  /* Blockanzeige für konsistente Breite */
+    width: 80px;  /* Stellen Sie sicher, dass die Breite korrekt ist */
+    text-align: center;  /* Text zentrieren */
+}
+
+.k-grid .aufgabe-link:hover {
+    text-decoration: underline;  /* Unterstreichung beim Hover */
+}
+
+.k-grid tr.k-state-selected {
+    background-color: #cce5ff !important;
+    color: #004085;
+}
+.create-icon {
+    font-size: 24px;
+    color: #28a745; /* Grün für "Erstellen" */
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px; /* Platzierung rechts */
+    transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.create-icon:hover {
+    color: #218838; /* Etwas dunkler bei Hover */
+    transform: scale(1.1); /* Vergrößert das Icon leicht */
+}
+
+

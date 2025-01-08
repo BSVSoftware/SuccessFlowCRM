@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <title>Aktion erledigen - SuccessFlowCRM</title>
+
+    <!-- Kendo CSS -->
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css" />
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <!-- Eigene CSS -->
+    <link rel="stylesheet" href="../css/aktion_erledigen.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+</head>
+<body>
+<header id="header">
+    <div id="header-title">Aktion erledigen</div>
+    <i class="fas fa-arrow-left home-icon" id="home-icon"></i>
+</header>
+
+<div id="details-container">
+    <form id="details-form">
+        <!-- AufgabeNr (readonly) -->
+        <div class="form-group">
+            <label for="AufgabeNr">Aufgabe Nr</label>
+            <input type="text" id="AufgabeNr" name="AufgabeNr" class="k-textbox" readonly />
+        </div>
+
+        <!-- Kontaktperson -->
+        <div class="form-group">
+            <label for="Kontaktperson">Kontaktperson</label>
+            <select id="Kontaktperson" name="Kontaktperson"></select>
+        </div>
+
+        <!-- Workflow, Aktion, Status, Folgestatus -->
+        <div class="form-group">
+            <label for="Workflow">Workflow</label>
+            <select id="Workflow" name="Workflow"></select>
+        </div>
+        <div class="form-group">
+            <label for="Aktion">Aktion</label>
+            <select id="Aktion" name="Aktion"></select>
+        </div>
+        <div class="form-group">
+            <label for="Status">Status</label>
+            <select id="Status" name="Status"></select>
+        </div>
+        <div class="form-group">
+            <label for="Folgestatus">Folgestatus</label>
+            <select id="Folgestatus" name="Folgestatus"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="stichwort">Beschreibung</label>
+            <input type="text" id="stichwort" name="stichwort" class="k-textbox"/>
+        </div>
+
+        <div class="form-group">
+            <label for="externeInfo"></label>
+            <textarea id="externeInfo" name="externeInfo" class="info-textarea"></textarea>
+        </div>
+
+        <div class="buttons">
+            <!-- Button: Speichern (ohne Erledigen) -->
+            <button
+                    type="button"
+                    id="save-button"
+                    class="k-button k-primary"
+                    data-mode="update">
+                Speichern
+            </button>
+
+            <!-- Button: Erledigen (auf erledigt=true) -->
+            <button
+                    type="button"
+                    id="done-button"
+                    class="k-button k-success"
+                    data-mode="done">
+                Erledigen
+            </button>
+
+            <!-- Cancel-Button -->
+            <button
+                    type="button"
+                    id="cancel-button"
+                    class="k-button">
+                Abbrechen
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Popup-Menü, falls benötigt -->
+<div id="popup-menu" style="display:none;">
+    <ul>
+        <li><a href="../html/aktionen.html"><i class="fas fa-tasks"></i> Aktionen</a></li>
+        <li><a href="../html/aufgaben.html"><i class="fas fa-check-circle"></i> Aufgaben</a></li>
+        <li><a href="../html/kunden.html"><i class="fas fa-user"></i> Kunden</a></li>
+    </ul>
+</div>
+
+<!-- Eigene JS-Datei -->
+<script type="module" src="../js/aktion_erledigen.js"></script>
+</body>
+</html>

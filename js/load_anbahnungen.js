@@ -1,23 +1,24 @@
-import { API_URL } from './app.js';
+import { API_URL,APP_RQ } from './app.js';
 import { openIndexedDB } from './indexedDB.js';
 
-function parseDate(dateString) {
-    if (dateString) {
-        const [day, month, year] = dateString.split('.').map(Number);
-        return new Date(year, month - 1, day);
-    }
-    return null;
-}
-
-export async function loadAnbahnungen() {
+export async function loadAnbahnungen(anbahnungNr = null) {
     try {
         const sid = localStorage.getItem('SID');
-        const response = await fetch(`${API_URL}saRequester&ARGUMENTS=-Agetanbahnung`, {
+
+        // API-Endpunkt und Body vorbereiten
+        const url = `${API_URL}${APP_RQ}&ARGUMENTS=-Agetanbahnung`;
+        const options = {
+            method: anbahnungNr ? 'POST' : 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                'SID': sid
-            }
-        });
+                'SID': sid,
+            },
+            body: anbahnungNr ? JSON.stringify({ AnbahnungNr: anbahnungNr }) : null,
+        };
+
+        // REST-API-Aufruf
+        const response = await fetch(url, options);
+
         if (!response.ok) {
             if (response.status === 401) {
                 handleUnauthorized();
@@ -25,6 +26,7 @@ export async function loadAnbahnungen() {
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+
         const anbahnungenData = await response.json();
         const db = await openIndexedDB();
 
@@ -33,13 +35,19 @@ export async function loadAnbahnungen() {
             const store = transaction.objectStore('anbahnungen');
 
             anbahnungenData.forEach(entry => {
+                // Leere Werte ersetzen und AnbahnungNr sicherstellen
                 Object.keys(entry).forEach(key => {
                     if (entry[key] === null) {
                         entry[key] = '';
-                    } else if (key.endsWith('am') && entry[key]) {
-                        entry[key] = parseDate(entry[key]).toISOString();
                     }
                 });
+
+                if (!entry.AnbahnungNr) {
+                    return; // Überspringen
+                }
+
+                entry.AnbahnungNr = Number(entry.AnbahnungNr); // AnbahnungNr numerisch sicherstellen
+
                 const request = store.put(entry);
 
                 request.onerror = (event) => {
@@ -49,7 +57,11 @@ export async function loadAnbahnungen() {
                 };
             });
 
-            transaction.oncomplete = () => resolve();
+            transaction.oncomplete = () => {
+                console.log('Anbahnungen erfolgreich gespeichert.');
+                resolve();
+            };
+
             transaction.onerror = (event) => {
                 console.error('Transaction error:', event.target.error);
                 showErrorModal('Transaction error: ' + event.target.error.message);
@@ -64,7 +76,7 @@ export async function loadAnbahnungen() {
 
 function handleUnauthorized() {
     alert('Ihre Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein.');
-    window.location.href = '/CRM/html/login.html';
+    window.location.href = '../html/login.html';
 }
 
 function showErrorModal(message) {
@@ -88,7 +100,7 @@ function showErrorModal(message) {
     messageElement.textContent = message;
 
     const closeButton = document.createElement('button');
-    closeButton.textContent = 'Close';
+    closeButton.textContent = 'Schließen';
     closeButton.addEventListener('click', () => {
         modal.remove();
     });

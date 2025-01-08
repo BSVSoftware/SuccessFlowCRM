@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktion - SuccessFlowCRM</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../css/aktion.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+</head>
+<body>
+<header id="header">
+    <div id="header-title">Aktion bearbeiten</div>
+    <i class="fas fa-arrow-left home-icon" id="home-icon"></i>
+</header>
+
+<div id="details-container">
+    <form id="details-form">
+        <!-- AufgabeNr -->
+        <div class="form-group">
+            <label for="AufgabeNr">Aufgabe Nr</label>
+            <input type="text" id="AufgabeNr" name="AufgabeNr" class="k-textbox" readonly>
+        </div>
+
+        <!-- MultiSelect für Mitarbeiter -->
+        <div class="form-group">
+            <label for="multiMitarbeiter">Mitarbeiter (Multi)</label>
+            <select id="multiMitarbeiter" name="multiMitarbeiter"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="Kontaktperson">Kontaktperson</label>
+            <select id="Kontaktperson" name="Kontaktperson"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="Workflow">Workflow</label>
+            <select id="Workflow" name="Workflow"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="Aktion">Aktion</label>
+            <select id="Aktion" name="Aktion"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="Status">Status</label>
+            <select id="Status" name="Status"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="Folgestatus">Folgestatus</label>
+            <select id="Folgestatus" name="Folgestatus"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="Stichwort">Stichwort</label>
+            <input type="text" id="Stichwort" name="Stichwort">
+        </div>
+
+        <!-- Externe Info -->
+        <div class="form-group">
+            <label for="externeInfo">Externe Info</label>
+            <textarea id="externeInfo" name="externeInfo" class="info-textarea"></textarea>
+        </div>
+
+        <!-- Termin (Datum/Zeit/Dauer) -->
+        <div class="form-group">
+            <label for="TerminDatum">Termin Datum</label>
+            <input type="text" id="TerminDatum" name="TerminDatum">
+        </div>
+        <div class="form-group">
+            <label for="TerminZeit">Termin Zeit</label>
+            <input type="text" id="TerminZeit" name="TerminZeit" class="k-timepicker">
+        </div>
+        <div class="form-group">
+            <label for="TerminDauer">Termin Dauer</label>
+            <input type="text" id="TerminDauer" name="TerminDauer" class="k-timepicker">
+        </div>
+
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="letzteAktionschliessen" name="letzteAktionschliessen">
+                Letzte Aktion abschließen
+            </label>
+        </div>
+
+        <div class="buttons">
+            <button type="submit" id="save-button" class="k-button k-primary">Speichern</button>
+            <button type="button" id="cancel-button" class="k-button">Abbrechen</button>
+        </div>
+    </form>
+</div>
+
+<div id="popup-menu" style="display: none;">
+    <ul>
+        <li><a href="../html/aktionen.html"><i class="fas fa-tasks"></i> Aktionen</a></li>
+        <li><a href="../html/aufgaben.html"><i class="fas fa-check-circle"></i> Aufgaben</a></li>
+        <li><a href="../html/kunden.html"><i class="fas fa-user"></i> Kunden</a></li>
+    </ul>
+</div>
+
+<script type="module" src="../js/aktion.js"></script>
+</body>
+</html>

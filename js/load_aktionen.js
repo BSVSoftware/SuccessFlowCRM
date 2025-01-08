@@ -1,89 +1,112 @@
-import { API_URL } from './app.js';
+import { API_URL,APP_RQ } from './app.js';
 import { openIndexedDB } from './indexedDB.js';
 
-export async function loadAktionen() {
-    try {
-        const sid = localStorage.getItem('SID');
-        const response = await fetch(`${API_URL}saRequester&ARGUMENTS=-Agetcrmaktionen`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'SID': sid
-            }
-        });
-        if (!response.ok) {
-            if (response.status === 401) {
-                handleUnauthorized();
-                return;
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const aktionenData = await response.json();
-        const db = await openIndexedDB();
+export async function loadAktionen(kundenNr = null, aufgabenNr = null, aktionNr = null) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const sid = localStorage.getItem('SID');
+            const requestBody = {};
 
-        return new Promise((resolve, reject) => {
+            // ---------------------------------------
+            // NEU: Prüfen, ob keine Parameter gesetzt:
+            // ---------------------------------------
+            if (!kundenNr && !aufgabenNr && !aktionNr) {
+                // -> MitarbeiterNr aus localStorage ziehen (als Fallback)
+                const mitarbeiterNrLocal = localStorage.getItem("MitarbeiterNr");
+                if (mitarbeiterNrLocal) {
+                    // numerisch konvertieren, falls möglich
+                    requestBody.MitarbeiterNr = parseInt(mitarbeiterNrLocal, 10) || 0;
+                    console.log("Lade Aktionen gefiltert nach MitarbeiterNr:", requestBody.MitarbeiterNr);
+                } else {
+                    console.warn("Keine Parameter und keine MitarbeiterNr im localStorage gefunden.");
+                    // Sie können hier optional abbrechen:
+                    // return reject("Keine Parameter und keine MitarbeiterNr gefunden.");
+                }
+            } else {
+                // Parameter hinzufügen, falls sie vorhanden sind
+                if (kundenNr)    requestBody.KundenNr    = kundenNr;
+                if (aufgabenNr)  requestBody.AufgabenNr  = aufgabenNr;
+                if (aktionNr)    requestBody.AktionNr    = aktionNr;
+            }
+
+            const db = await openIndexedDB();
             const transaction = db.transaction(['aktionen'], 'readwrite');
             const store = transaction.objectStore('aktionen');
 
-            aktionenData.forEach(entry => {
-                Object.keys(entry).forEach(key => {
-                    if (entry[key] === null) {
-                        entry[key] = '';
+            // Vorhandene Aktionen löschen, falls kein spezifischer Filter (AktionNr) gesetzt ist
+            if (!aktionNr) {
+                store.clear();  // ggf. nur leeren, wenn man wirklich alle löschen möchte
+            }
+
+            transaction.oncomplete = async () => {
+                console.log('Lade neue Aktionen von der REST-API...');
+
+                try {
+                    const response = await fetch(`${API_URL}${APP_RQ}&ARGUMENTS=-Agetcrmaktionen`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'SID': sid
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            handleUnauthorized();
+                            reject('Unauthorized');
+                            return;
+                        }
+                        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
                     }
-                });
-                const request = store.put(entry);
 
-                request.onerror = (event) => {
-                    console.error('Error storing aktionen data:', event.target.error);
-                    showErrorModal('Error storing aktionen data: ' + event.target.error.message);
-                    reject(event.target.error);
-                };
-            });
+                    const aktionenData = await response.json();
 
-            transaction.oncomplete = () => resolve();
+                    const saveTransaction = db.transaction(['aktionen'], 'readwrite');
+                    const saveStore = saveTransaction.objectStore('aktionen');
+
+                    aktionenData.forEach(entry => {
+                        // Null-Felder in leere Strings umwandeln
+                        Object.keys(entry).forEach(key => {
+                            if (entry[key] === null) {
+                                entry[key] = '';
+                            }
+                        });
+                        if (!entry.AktionNr) {
+                            console.warn("Objekt ohne AktionNr - wird nicht gespeichert:", entry);
+                            return; // Überspringen
+                        }
+
+                        saveStore.put(entry);
+                    });
+
+                    saveTransaction.oncomplete = () => {
+                        console.log('Neue Aktionen erfolgreich in IndexedDB gespeichert.');
+                        resolve();
+                    };
+
+                    saveTransaction.onerror = (event) => {
+                        console.error('Fehler beim Speichern der Aktionen:', event.target.error);
+                        reject(event.target.error);
+                    };
+                } catch (apiError) {
+                    console.error('Fehler beim Abrufen der Aktionen:', apiError);
+                    reject(apiError);
+                }
+            };
+
             transaction.onerror = (event) => {
-                console.error('Transaction error:', event.target.error);
-                showErrorModal('Transaction error: ' + event.target.error.message);
+                console.error('Fehler beim Löschen der Aktionen:', event.target.error);
                 reject(event.target.error);
             };
-        });
-    } catch (error) {
-        console.error('Error loading aktionen data:', error);
-        showErrorModal('Error loading aktionen data: ' + error.message);
-    }
+        } catch (error) {
+            console.error('Fehler beim Laden der Aktionen:', error);
+            reject(error);
+        }
+    });
 }
 
 function handleUnauthorized() {
     alert('Ihre Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein.');
-    window.location.href = '/CRM/html/login.html';
-}
-
-function showErrorModal(message) {
-    const existingModal = document.getElementById('error-modal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-
-    const modal = document.createElement('div');
-    modal.id = 'error-modal';
-    modal.style.position = 'fixed';
-    modal.style.top = '50%';
-    modal.style.left = '50%';
-    modal.style.transform = 'translate(-50%, -50%)';
-    modal.style.padding = '20px';
-    modal.style.backgroundColor = 'white';
-    modal.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
-    modal.style.zIndex = '1000';
-
-    const messageElement = document.createElement('p');
-    messageElement.textContent = message;
-
-    const closeButton = document.createElement('button');
-    closeButton.textContent = 'Close';
-    closeButton.addEventListener('click', () => {
-        modal.remove();
-    });
-
-    modal.appendChild(messageElement);
-    modal.appendChild(closeButton);
-    document.body.appendChild(modal);
+    window.location.href = '../html/login.html';
 }

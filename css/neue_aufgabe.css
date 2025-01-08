@@ -1,0 +1,124 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+#header {
+    width: 100%;
+    background-color: #e0f7e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#header-title {
+    font-size: 24px;
+    font-weight: bold;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.home-icon {
+    font-size: 24px;
+    color: #007bff;
+    cursor: pointer;
+}
+.back-icon {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    color: #007bff;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.back-icon i {
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+.back-icon:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+#details-container {
+    margin: 20px auto;
+    width: 100%;
+    max-width: 640px; /* Maximale Breite des Formulars */
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, select, textarea {
+    width: 90%; /* Breite der Eingabefelder */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+textarea {
+    resize: none;
+}
+
+/* Multiline Felder für Beschreibung und Aufgaben */
+.multiline-field textarea {
+    height: 120px; /* Entspricht 5 Zeilen */
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+
+.flex-container input {
+    flex-grow: 1;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.k-button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.k-button.k-primary {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+}
+/* Ganz unten anfügen oder in separater overrides.css,
+   damit es nach dem Kendo-CSS kommt */
+.k-widget.k-combobox,
+.k-widget.k-dropdown,
+.k-widget.k-datepicker,
+.k-widget.k-textbox,
+.k-widget.k-textarea {
+    width: 90% !important;
+}
+
+.k-combobox .k-input,
+.k-dropdown .k-input,
+.k-datepicker .k-input {
+    width: 100% !important;
+}

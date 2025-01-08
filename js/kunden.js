@@ -1,183 +1,332 @@
-import { API_URL, APP_ID } from './app.js';
-import { loadKunden } from './load_kunden.js';
+import { fetchAndStoreKunden, loadKundeFromIndexedDB, loadKundenFromIndexedDB } from './fetch_kunden.js';
+import { fetchKontaktpersonenData } from './fetch_kontaktpersonen.js';
+import { fetchAktionenData } from './fetch_aktionen.js';
+import { loadAktionen } from './load_aktionen.js';
 
-$(document).ready(function () {
-    const fetchKundenData = async () => {
-        const db = await openIndexedDB();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction(['kunden'], 'readonly');
-            const store = transaction.objectStore('kunden');
-            const request = store.getAll();
+document.getElementById('back-icon').addEventListener('click', function () {
+    const sourcePage = localStorage.getItem("sourcePage");
 
-            request.onsuccess = () => {
-                resolve(request.result);
-            };
-            request.onerror = (event) => {
-                reject(event.target.error);
-            };
-        });
-    };
+    if (sourcePage === "neue_anbahnung") {
+        console.log("Navigiere zurück zu neue_anbahnung.html");
+        localStorage.removeItem("sourcePage");
+        window.location.href = "../html/neue_anbahnung.html";
+    } else {
+        window.history.back();
+    }
+});
 
-    const openIndexedDB = () => {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open('SuccessFlowCRM', 1);
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
-                if (!db.objectStoreNames.contains('kunden')) {
-                    db.createObjectStore('kunden', { keyPath: 'KundenNr' });
+document.getElementById('home-icon').addEventListener('click', () => {
+    window.location.href = '../html/menue.html';
+});
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const currentKundenNr = localStorage.getItem("currentKundenNr");
+    let kundenData = [];
+
+    if (currentKundenNr) {
+        const kdNr = Number(currentKundenNr);
+        const singleKunde = await loadKundeFromIndexedDB(kdNr);
+        kundenData = singleKunde ? [singleKunde] : [];
+    } else {
+        kundenData = await loadKundenFromIndexedDB();
+    }
+
+    renderCustomerGrid(kundenData);
+
+
+    $("#fab-items").kendoFloatingActionButton({
+        align: "bottom end",
+        icon: "plus",
+        themeColor: "primary",
+        items: [
+            {
+                label: "neuer Kunde",
+                icon: "k-i-user",
+                click: function () {
+                    // currentKundenNr entfernen
+                    localStorage.removeItem("currentKundenNr");
+                    window.location.href = "../html/kunde.html";
                 }
-            };
-            request.onsuccess = (event) => resolve(event.target.result);
-            request.onerror = (event) => reject(event.target.error);
-        });
-    };
+            },
+            {
+                label: "neue Kontaktperson",
+                icon: "k-i-user-add",
+                click: function () {
+                    // currentKontaktpersonNr entfernen
+                    localStorage.removeItem("currentKontaktpersonNr");
+                    window.location.href = "../html/kontaktperson.html";
+                }
+            }
+        ]
+    });
 
-    const initializeGrid = async () => {
-        const kundenData = await fetchKundenData();
+    const searchInput = document.getElementById('search');
+    const searchIcon = document.getElementById('search-icon');
 
+    searchIcon.addEventListener('click', async function () {
+        await handleSearch(searchInput.value.trim());
+    });
+
+    searchInput.addEventListener('keydown', async function (event) {
+        if (event.key === 'Enter') {
+            await handleSearch(searchInput.value.trim());
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        const grid = $("#grid").data("kendoGrid");
+        if (grid) {
+            grid.setOptions({ height: calculateGridHeight() });
+            grid.resize();
+        }
+    });
+});
+
+async function handleSearch(query) {
+    if (query.length >= 3) {
+        console.log(`Suche nach: ${query}`);
+        // currentKundenNr entfernen, damit nur Suchergebnisse gezeigt werden
+        localStorage.removeItem('currentKundenNr');
+
+        const kundenData = await fetchAndStoreKunden(query);
+        renderCustomerGrid(kundenData);
+    } else {
+        alert('Bitte geben Sie mindestens 3 Zeichen für die Suche ein.');
+    }
+}
+
+function renderCustomerGrid(data) {
+    const gridElement = $("#grid").data("kendoGrid");
+
+    if (gridElement) {
+        gridElement.dataSource.data(data);
+        gridElement.refresh();
+    } else {
         $("#grid").kendoGrid({
             dataSource: {
-                data: kundenData,
-                pageSize: 10,
+                data: data,
+                pageSize: 20,
                 schema: {
                     model: {
                         fields: {
                             KundenNr: { type: "number" },
                             Kunde: { type: "string" },
-                            Name1: { type: "string" },
-                            Name2: { type: "string" },
-                            Name3: { type: "string" },
-                            Strasse: { type: "string" },
-                            Plz: { type: "string" },
-                            Ort: { type: "string" },
-                            Land: { type: "string" },
-                            TelefonNr: { type: "string" },
-                            gesperrt: { type: "boolean" },
-                            KundenSicht: { type: "string" },
-                            Kontoart: { type: "string" },
-                            HotlineSperre: { type: "boolean" },
                             Adresse: { type: "string" },
-                            URL: { type: "string" },
+                            TelefonNr: { type: "string" },
                             EMail: { type: "string" },
-                            Partner: { type: "string" },
-                            Privatperson: { type: "boolean" },
-                            Anrede: { type: "string" },
-                            Titel: { type: "string" },
-                            Vorname: { type: "string" },
-                            Nachname: { type: "string" },
-                            DSGVO: { type: "boolean" }
+                            Mandant: { type: "string" },
+                            UmsatzsteuerId: { type: "string" }
                         }
                     }
-                },
-                filter: {
-                    logic: "or",
-                    filters: []
                 }
             },
-            pageable: {
-                refresh: true,
-                pageSizes: [5, 10, 20],
-                buttonCount: 5
+            detailExpand: function(e) {
+                // e.masterRow ist die Zeile, die expandiert wurde
+                // => passendes Datenobjekt abgreifen:
+                const dataItem = this.dataItem(e.masterRow);
+                if (dataItem && dataItem.KundenNr) {
+                    localStorage.setItem("currentKundenNr", dataItem.KundenNr);
+                    console.log("currentKundenNr gesetzt durch detailExpand:", dataItem.KundenNr);
+                }
             },
-            sortable: true,
-            filterable: true,
+            height: calculateGridHeight(),
             scrollable: true,
-            resizable: true,
-            reorderable: true,
-            columns: [
-                { field: "KundenNr", title: "Kunden Nr", width: "150px" },
-                { field: "Kunde", title: "Kunde", width: "150px" },
-                { field: "Name1", title: "Name 1", width: "150px" },
-                { field: "Name2", title: "Name 2", width: "150px" },
-                { field: "Name3", title: "Name 3", width: "150px" },
-                { field: "Strasse", title: "Strasse", width: "150px" },
-                { field: "Plz", title: "PLZ", width: "100px" },
-                { field: "Ort", title: "Ort", width: "150px" },
-                { field: "Land", title: "Land", width: "100px" },
-                { field: "TelefonNr", title: "Telefon Nr", width: "150px" },
-                { field: "gesperrt", title: "Gesperrt", width: "100px" },
-                { field: "KundenSicht", title: "Kunden Sicht", width: "150px" },
-                { field: "Kontoart", title: "Kontoart", width: "100px" },
-                { field: "HotlineSperre", title: "Hotline Sperre", width: "100px" },
-                { field: "Adresse", title: "Adresse", width: "250px" },
-                { field: "URL", title: "URL", width: "150px" },
-                { field: "EMail", title: "E-Mail", width: "150px" },
-                { field: "Partner", title: "Partner", width: "150px" },
-                { field: "Privatperson", title: "Privatperson", width: "100px" },
-                { field: "Anrede", title: "Anrede", width: "100px" },
-                { field: "Titel", title: "Titel", width: "100px" },
-                { field: "Vorname", title: "Vorname", width: "150px" },
-                { field: "Nachname", title: "Nachname", width: "150px" },
-                { field: "DSGVO", title: "DSGVO", width: "100px" }
-            ],
-            detailTemplate: kendo.template(
-                "<div class='detail-view'>" +
-                "<p><strong>Kunden Nr:</strong> #: KundenNr #</p>" +
-                "<p><strong>Kunde:</strong> #: Kunde #</p>" +
-                "<p><strong>Name 1:</strong> #: Name1 #</p>" +
-                "<p><strong>Name 2:</strong> #: Name2 #</p>" +
-                "<p><strong>Name 3:</strong> #: Name3 #</p>" +
-                "<p><strong>Strasse:</strong> #: Strasse #</p>" +
-                "<p><strong>PLZ:</strong> #: Plz #</p>" +
-                "<p><strong>Ort:</strong> #: Ort #</p>" +
-                "<p><strong>Land:</strong> #: Land #</p>" +
-                "<p><strong>Telefon Nr:</strong> #: TelefonNr #</p>" +
-                "<p><strong>Gesperrt:</strong> #: gesperrt #</p>" +
-                "<p><strong>Kunden Sicht:</strong> #: KundenSicht #</p>" +
-                "<p><strong>Kontoart:</strong> #: Kontoart #</p>" +
-                "<p><strong>Hotline Sperre:</strong> #: HotlineSperre #</p>" +
-                "<p><strong>Adresse:</strong> #: Adresse #</p>" +
-                "<p><strong>URL:</strong> #: URL #</p>" +
-                "<p><strong>E-Mail:</strong> #: EMail #</p>" +
-                "<p><strong>Partner:</strong> #: Partner #</p>" +
-                "<p><strong>Privatperson:</strong> #: Privatperson #</p>" +
-                "<p><strong>Anrede:</strong> #: Anrede #</p>" +
-                "<p><strong>Titel:</strong> #: Titel #</p>" +
-                "<p><strong>Vorname:</strong> #: Vorname #</p>" +
-                "<p><strong>Nachname:</strong> #: Nachname #</p>" +
-                "<p><strong>DSGVO:</strong> #: DSGVO #</p>" +
-                "</div>"
-            ),
-            detailInit: function (e) {
-                e.detailRow.find(".detail-view").show();
+            pageable: true,
+            selectable: "row",
+            sortable: true,
+            dataBound: function(e) {
+                const grid = e.sender;
+
+                // Wenn currentKundenNr vorhanden ist, auswählen und aufklappen
+                const currentKundenNr = localStorage.getItem("currentKundenNr");
+                if (currentKundenNr) {
+                    const data = grid.dataSource.view();
+                    const item = data.find(d => d.KundenNr == currentKundenNr);
+                    if (item) {
+                        let row;
+                        grid.tbody.find("tr").each(function() {
+                            const dataItem = grid.dataItem(this);
+                            if (dataItem && dataItem.KundenNr == currentKundenNr) {
+                                row = $(this);
+                                return false;
+                            }
+                        });
+
+                        if (row) {
+                            grid.select(row);
+                            grid.expandRow(row);
+                        }
+                    }
+                }
+
+                // Detail-Button für Kunden
+                grid.tbody.find(".kunden-detail-btn").on("click", function(evt) {
+                    const tr = $(evt.target).closest("tr");
+                    const dataItem = grid.dataItem(tr);
+
+                    if (dataItem && dataItem.KundenNr) {
+                        localStorage.setItem("currentKundenNr", dataItem.KundenNr);
+                        console.log("currentKundenNr über Detail-Button gesetzt:", dataItem.KundenNr);
+                        window.location.href = "../html/kunde.html";
+                    }
+                });
             },
-            noRecords: {
-                template: "Keine Daten verfügbar"
-            }
+            change: function (e) {
+                const grid = e.sender;
+                const selectedRow = grid.select();
+                const selectedDataItem = grid.dataItem(selectedRow);
+                if (selectedDataItem && selectedDataItem.KundenNr) {
+                    localStorage.setItem("currentKundenNr", selectedDataItem.KundenNr);
+                    console.log(`currentKundenNr aktualisiert: ${selectedDataItem.KundenNr}`);
+                }
+            },
+            detailTemplate: `
+                <div class="details-container">
+                    <h4>Kontaktpersonen</h4>
+                    <div class="kontaktpersonen-grid"></div>
+                    <h4>Aktionen</h4>
+                    <div class="aktionen-grid"></div>
+                </div>
+            `,
+            detailInit: async function (e) {
+                const kundenNr = e.data.KundenNr;
+
+                const loader = $("<div class='loading'>Lade Kontaktpersonen...</div>");
+                e.detailCell.find(".kontaktpersonen-grid").append(loader);
+
+                try {
+                    const kontaktpersonenData = await fetchKontaktpersonenData(kundenNr);
+                    $("<div/>").appendTo(e.detailCell.find(".kontaktpersonen-grid")).kendoGrid({
+                        dataSource: { data: kontaktpersonenData, pageSize: 5 },
+                        scrollable: true,
+                        pageable: true,
+                        sortable: true,
+                        selectable: "row",
+                        change: function(ev) {
+                            const grid = ev.sender;
+                            const selectedRow = grid.select();
+                            const dataItem = grid.dataItem(selectedRow);
+                            if (dataItem && dataItem.PersonNr) {
+                                localStorage.setItem("currentKontaktpersonNr", dataItem.PersonNr);
+                                console.log("currentKontaktpersonNr gesetzt:", dataItem.PersonNr);
+                            }
+                        },
+                        columns: [
+                            { field: "PersonNr", title: "Person Nr" },
+                            { field: "Name", title: "Name" },
+                            { field: "Abteilung", title: "Abteilung" },
+                            { field: "Funktion", title: "Funktion" },
+                            { field: "Sympathie", title: "Sympathie" },
+                            { field: "Telefon", title: "Telefon" },
+                            { field: "EMail", title: "E-Mail" },
+                            {
+                                title: "Details",
+                                template: `<button class='k-button k-primary detail-btn'>Detail</button>`
+                            }
+                        ],
+                        dataBound: function(e) {
+                            const grid = e.sender;
+                            grid.tbody.find(".detail-btn").on("click", function(evt) {
+                                const tr = $(evt.target).closest("tr");
+                                const dataItem = grid.dataItem(tr);
+
+                                if (dataItem && dataItem.PersonNr) {
+                                    localStorage.setItem("currentKontaktpersonNr", dataItem.PersonNr);
+                                    console.log("currentKontaktpersonNr über Detail-Button gesetzt:", dataItem.PersonNr);
+                                    window.location.href = "../html/kontaktperson.html";
+                                }
+                            });
+                        }
+                    });
+
+                    await loadAktionen(kundenNr);
+                    const aktionenData = await fetchAktionenData(kundenNr);
+                    $("<div/>").appendTo(e.detailCell.find(".aktionen-grid")).kendoGrid({
+                        dataSource: { data: aktionenData, pageSize: 5 },
+                        scrollable: true,
+                        pageable: true,
+                        sortable: true,
+                        selectable: "row",
+                        change: function(ae) {
+                            const aGrid = ae.sender;
+                            const selectedARow = aGrid.select();
+                            const aDataItem = aGrid.dataItem(selectedARow);
+                            if (aDataItem && aDataItem.AufgabenNr) {
+                                // currentAufgabenNr setzen, wenn Aktion selektiert wird
+                                localStorage.setItem("currentAufgabenNr", aDataItem.AufgabenNr);
+                                console.log("currentAufgabenNr gesetzt:", aDataItem.AufgabenNr);
+                            }
+                        },
+                        columns: [
+                            { field: "AufgabenNr", title: "Aufgaben Nr" },
+                            { field: "TerminDatum", title: "Termin Datum", format: "{0:dd.MM.yyyy}" },
+                            { field: "TerminUhrzeit", title: "Termin Uhrzeit" },
+                            { field: "Beschreibung", title: "Beschreibung" },
+                            { field: "Stichwort", title: "Stichwort" },
+                            {
+                                title: "Aufgabe-Details",
+                                template: `<button class='k-button k-primary aufgabe-detail-btn'>Aufgabe Detail</button>`
+                            },
+                            {
+                                title: "Aktion-Details",
+                                template: `<button class='k-button k-secondary aktion-detail-btn'>Aktion Detail</button>`
+                            }
+                        ],
+                        dataBound: function(ae) {
+                            const aGrid = ae.sender;
+                            // Aufgabe Detail
+                            aGrid.tbody.find(".aufgabe-detail-btn").on("click", function(evt) {
+                                const tr = $(evt.target).closest("tr");
+                                const aDataItem = aGrid.dataItem(tr);
+                                if (aDataItem && aDataItem.AufgabenNr) {
+                                    localStorage.setItem("currentAufgabenNr", aDataItem.AufgabenNr);
+                                    console.log("currentAufgabenNr über Aufgabe-Detail-Button gesetzt:", aDataItem.AufgabenNr);
+                                    window.location.href = "../html/aufgaben_details.html";
+                                }
+                            });
+
+                            // Aktion Detail
+                            aGrid.tbody.find(".aktion-detail-btn").on("click", function(evt) {
+                                const tr = $(evt.target).closest("tr");
+                                const aDataItem = aGrid.dataItem(tr);
+                                if (aDataItem && aDataItem.AktionNr) {
+                                    localStorage.setItem("currentAktionNr", aDataItem.AktionNr);
+                                    console.log("currentAktionNr über Aktion-Detail-Button gesetzt:", aDataItem.AktionNr);
+                                    window.location.href = "../html/aktion.html";
+                                } else {
+                                    console.warn("Keine AktionNr im Datensatz vorhanden!");
+                                }
+                            });
+                        }
+                    });
+                } catch (error) {
+                    console.error("Fehler beim Laden der Kontaktpersonen:", error);
+                    e.detailCell.find(".kontaktpersonen-grid").html("<div class='error'>Fehler beim Laden der Kontaktpersonen.</div>");
+                } finally {
+                    loader.remove();
+                }
+            },
+            columns: [
+                {
+                    title: "Details",
+                    template: `<button class='k-button k-primary kunden-detail-btn'>Detail</button>`
+                },
+                { field: "Mandant", title: "Mandant" },
+                { field: "KundenNr", title: "Kunden Nr" },
+                { field: "Kunde", title: "Kunde" },
+                { field: "Adresse", title: "Adresse" },
+                { field: "TelefonNr", title: "Telefon" },
+                { field: "EMail", title: "E-Mail" },
+                { field: "UmsatzsteuerId", title: "UmsatzsteuerId" }
+            ]
         });
+    }
+}
 
-        // Add event listener for the refresh button in the pager
-        $(".k-pager-refresh").on("click", async () => {
-            await loadKunden();
-            const updatedData = await fetchKundenData();
-            const grid = $("#grid").data("kendoGrid");
-            grid.dataSource.data(updatedData);
-        });
+function calculateGridHeight() {
+    const windowHeight = window.innerHeight;
+    const headerHeight = document.getElementById('header').offsetHeight;
+    const paddingBottom = 150;
 
-        $("#search").on("input", function () {
-            const value = $(this).val();
-            const grid = $("#grid").data("kendoGrid");
-            grid.dataSource.filter({
-                logic: "or",
-                filters: [
-                    { field: "KundenNr", operator: "contains", value: value },
-                    { field: "Kunde", operator: "contains", value: value },
-                    { field: "Name1", operator: "contains", value: value },
-                    { field: "Name2", operator: "contains", value: value },
-                    { field: "Name3", operator: "contains", value: value },
-                    { field: "Strasse", operator: "contains", value: value },
-                    { field: "Plz", operator: "contains", value: value },
-                    { field: "Ort", operator: "contains", value: value },
-                    { field: "Land", operator: "contains", value: value },
-                    { field: "TelefonNr", operator: "contains", value: value }
-                ]
-            });
-        });
-    };
-
-    initializeGrid();
-
-    document.getElementById('home-icon').addEventListener('click', () => {
-        window.location.href = '/CRM/html/menue.html';
-    });
-});
+    return windowHeight - headerHeight - paddingBottom;
+}

@@ -1,80 +1,113 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f4f8;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh;
+/* Basis-Einstellungen */
+html, body {
     margin: 0;
-}
-
-#header {
-    width: 100%;
-    background-color: #e0f7e0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#header-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-left: 20px;
-}
-
-.refresh-icon {
-    font-size: 24px;
-    color: #007bff;
-    cursor: pointer;
-    margin-right: 20px;
-}
-
-#menu {
-    display: none;
-    width: 100%;
-    padding: 20px;
-}
-
-#menu ul {
-    display: flex;
-    flex-wrap: wrap;
-    list-style: none;
     padding: 0;
+    width: 100%;
+    height: 100%;
+    /* Basis-Schrift auf 16px, Zeilenhöhe etwas größer */
+    font-size: 16px;
+    line-height: 1.4;
+    /* iOS Safari soll nicht ungefragt an der Schrift rummachen: */
+    -webkit-text-size-adjust: none;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Alle Elemente erben box-sizing: border-box */
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+/* Header-Leiste oben */
+#header {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to top, #014F80 0%, #092646 100%);
+    color: #fff;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+/* Kendo-Hamburger-Button links */
+.k-rpanel-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.k-rpanel-left {
+    z-index: 999;
+}
+
+/* Titel in der Mitte */
+#header-title {
+    flex: 1;
+    font-size: 20px;
+}
+
+/* Refresh-Icon rechts */
+.refresh-icon {
+    font-size: 22px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* Container für Sidebar + Hauptinhalt */
+#layout-container {
+    display: flex;
+    width: 100%;
+    height: calc(100% - 50px); /* Headerhöhe ~ 50px */
+    overflow: hidden; /* Kein Scrollbalken, der iframe scrollt */
+}
+
+/* Sidebar / Kendo ResponsivePanel */
+#sidebar {
+    background: #092646;
+    color: #fff;
+    width: 250px; /* Festbreite auf großen Screens */
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* UL-Liste im Sidebar-Menü */
+#sidebar ul {
+    list-style: none;
     margin: 0;
-    justify-content: center;
+    padding: 0;
 }
-
-#menu ul li {
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 10px;
-    flex: 1 1 calc(50% - 20px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    max-width: 200px;
+#sidebar ul li {
+    border-bottom: 1px solid #08426c;
 }
-
-#menu ul li a {
+#sidebar ul li a {
+    display: block;
+    padding: 10px 15px;
+    color: #fff;
     text-decoration: none;
-    font-size: 18px;
-    color: #007bff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    font-size: 1rem; /* ~16px, erblich vom body */
+}
+#sidebar ul li a:hover {
+    background-color: #08426c;
 }
 
-#menu ul li a i {
-    font-size: 24px;
-    margin-bottom: 10px;
+/* Hauptinhalt (iframe) */
+#content-area {
+    flex: 1;
+    position: relative;
 }
-
-#menu ul li a span {
-    text-align: center;
+#content-area iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+#loading-spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
 }

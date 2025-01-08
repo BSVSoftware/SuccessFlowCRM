@@ -6,22 +6,32 @@
     <title>Telefonbuch - SuccessFlowCRM</title>
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="/CRM/css/phonebook.css">
+    <link rel="stylesheet" href="../css/telefonbuch.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
-    <script src="/CRM/js/kendo-ui-license.js"></script>
 </head>
 <body>
 <header id="header">
     <div id="header-title">Telefonbuch</div>
-    <i class="fas fa-home home-icon" id="home-icon"></i>
+    <div id="home-icon" class="home-icon">
+        <i class="fas fa-home"></i>
+    </div>
+    <div id="back-icon" class="back-icon">
+        <i class="fas fa-arrow-left"></i>
+    </div>
 </header>
+
+<!-- Suchfeld und Such-Symbol -->
 <div class="search-container">
-    <input type="text" id="search" placeholder="Suchen...">
+    <input type="text" id="search" placeholder="Suchbegriff eingeben..." />
+    <i class="fas fa-search" id="search-icon" title="Suchen"></i>
 </div>
+
+<!-- Kendo Grid Container -->
 <div id="grid-container">
     <div id="grid"></div>
 </div>
-<script type="module" src="/CRM/js/phonebook.js?V=1.00"></script>
+
+<script type="module" src="../js/telefonbuch.js"></script>
 </body>
 </html>

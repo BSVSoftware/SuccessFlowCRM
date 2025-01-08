@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontaktperson bearbeiten - SuccessFlowCRM</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
+    <link rel="stylesheet" href="../css/kontaktperson.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+</head>
+<body>
+<header id="header">
+    <div id="header-title">Kontaktperson</div>
+    <div id="home-icon" class="home-icon">
+        <i class="fas fa-home"></i>
+    </div>
+    <div id="back-icon" class="back-icon">
+        <i class="fas fa-arrow-left"></i>
+    </div>
+</header>
+
+<div class="form-container">
+    <h2>Kontaktperson bearbeiten</h2>
+    <form id="kontaktpersonen-form">
+        <div class="form-group">
+            <label for="PersonNr">Person Nr</label>
+            <input type="text" id="PersonNr" name="PersonNr" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="titel">Titel</label>
+            <input type="text" id="titel" name="titel" placeholder="Titel (z. B. Dr.)">
+        </div>
+
+        <div class="form-group">
+            <label for="anrede">Anrede</label>
+            <select id="anrede" name="anrede" required class="k-dropdown"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="vorname">Vorname</label>
+            <input type="text" id="vorname" name="vorname" placeholder="Vorname eingeben" required>
+        </div>
+
+        <div class="form-group">
+            <label for="nachname">Nachname</label>
+            <input type="text" id="nachname" name="nachname" placeholder="Nachname eingeben" required>
+        </div>
+        <div class="form-group">
+            <label for="sympathie">Sympathie</label>
+            <select id="sympathie" name="sympathie" class="k-dropdown"></select>
+        </div>
+        <div class="form-group">
+            <label for="funktion">Funktion</label>
+            <select id="funktion" name="funktion" class="k-dropdown"></select>
+        </div>
+        <div class="form-group">
+            <label for="abteilung">Abteilung</label>
+            <input type="text" id="abteilung" name="abteilung" placeholder="Abteilung">
+        </div>
+
+        <div class="form-group">
+            <label for="telefon">Telefonnummer</label>
+            <input type="text" id="telefon" name="telefon" placeholder="Telefonnummer eingeben">
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-Mail</label>
+            <input type="email" id="email" name="email" placeholder="E-Mail eingeben" required>
+        </div>
+
+        <div class="form-group">
+            <label for="handy">Handy</label>
+            <input type="text" id="handy" name="handy" placeholder="Handynummer (optional)">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" id="submit-btn">Speichern</button>
+            <button type="button" id="delete-btn" style="display:none;">Löschen</button>
+        </div>
+    </form>
+</div>
+
+<script type="module" src="../js/kontaktperson.js"></script>
+</body>
+</html>

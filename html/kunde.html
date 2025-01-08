@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kunde - SuccessFlowCRM</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
+    <link rel="stylesheet" href="../css/kunde.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+</head>
+<body>
+<header id="header">
+    <div id="header-title">Kunde</div>
+    <div id="home-icon" class="home-icon">
+        <i class="fas fa-home"></i>
+    </div>
+    <div id="back-icon" class="back-icon">
+        <i class="fas fa-arrow-left"></i>
+    </div>
+</header>
+<div class="form-container">
+    <form id="kunden-form">
+        <div class="form-group">
+            <label for="kundenNr">Kunden Nr.</label>
+            <input type="text" id="kundenNr" name="kundenNr" readonly>
+        </div>
+        <div class="form-group">
+            <label for="kunde">Matchcode</label>
+            <input type="text" id="kunde" name="kunde">
+        </div>
+
+        <div class="form-group">
+            <label for="name1">Name 1</label>
+            <input type="text" id="name1" name="name1">
+        </div>
+
+        <div class="form-group">
+            <label for="name2">Name 2</label>
+            <input type="text" id="name2" name="name2">
+        </div>
+
+        <div class="form-group">
+            <label for="name3">Name 3</label>
+            <input type="text" id="name3" name="name3">
+        </div>
+
+        <div class="form-group">
+            <label for="strasse">Straße</label>
+            <input type="text" id="strasse" name="strasse">
+        </div>
+
+        <div class="form-group">
+            <label for="land">Land</label>
+            <select id="land" name="land"></select>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="plz">Postleitzahl</label>
+                <input type="text" id="plz" name="plz">
+            </div>
+            <div class="form-group half-width">
+                <label for="ort">Ort</label>
+                <input type="text" id="ort" name="ort">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="telefon">Telefonnummer</label>
+            <input type="text" id="telefon" name="telefon">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="email">E-Mail</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="form-group half-width">
+                <label for="homepage">Homepage</label>
+                <input type="url" id="homepage" name="homepage">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="vertriebler">Vertriebler (VB)</label>
+            <select id="vertriebler" name="vertriebler"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="mandant">Mandant</label>
+            <select id="mandant" name="mandant"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="branche">Branche</label>
+            <select id="branche" name="branche"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="groesse">Betriebsgröße</label>
+            <select id="groesse" name="groesse">
+                <option value="5">&lt; 50 Mitarbeiter</option>
+                <option value="50">&gt; 50 und &lt; 500 Mitarbeiter</option>
+                <option value="500">&gt; 500 Mitarbeiter</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="interne_info">Interne Informationen</label>
+            <textarea id="interne_info" name="interne_info" rows="6"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" id="save-button">Speichern</button>
+            <button type="button" id="delete-button" style="display:none;">Löschen</button>
+        </div>
+    </form>
+</div>
+<script type="module" src="../js/kunde.js"></script>
+
+</body>
+</html>

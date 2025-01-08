@@ -1,10 +1,23 @@
 import { loadVertriebler } from './load_vertriebler.js';
-import { loadTelefonbuch } from './load_telefonbuch.js';
 import { loadAnbahnungen } from './load_anbahnungen.js';
-import { loadKunden } from './load_kunden.js';
 import { loadAufgaben } from './load_aufgaben.js';
 import { loadAktionen } from './load_aktionen.js';
+import { loadBranchenMandanten} from "./load_branchenmandaten.js";
 import { openIndexedDB, initializeDatabase } from './indexedDB.js';
+import { load_gruppen } from './load_gruppen.js';
+import { load_ratings } from './load_ratings.js';
+import { loadTermine } from './load_termine.js';
+import { getMitarbeiterNr } from './getMitarbeiterNr.js';
+import { load_workflows } from './load_workflows.js';
+import { load_laender } from './load_laender.js';
+import { load_sympathie } from './load_sympathie.js';
+import { load_kpfunktionen } from './load_kpfunktionen.js';
+import { load_grundverloren } from './load_grundverloren.js';
+import { load_mitbewerber } from './load_mitbewerber.js';
+import { load_Klassifizierungen } from './load_klassifizierungen.js';
+import { load_Statusschluessel } from './load_statusschluessel.js';
+import { load_Aktionsschluessel } from './load_aktionsschluessel.js';
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const companies = JSON.parse(localStorage.getItem('companies'));
@@ -12,11 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
         displayCompanySelection(companies);
     } else {
         alert('No companies found. Please log in again.');
-        window.location.href = '/CRM/html/login.html';
+        window.location.href = '../html/login.html';
     }
 
     document.getElementById('home-icon').addEventListener('click', () => {
-        window.location.href = '/CRM/html/login.html';
+        window.location.href = '../html/login.html';
     });
 
     $('#fab-items').kendoFloatingActionButton({
@@ -38,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
             label: 'Zurück zum Login',
             icon: 'arrow-left',
             click: function() {
-                window.location.href = '/CRM/html/login.html';
+                window.location.href = '../html/login.html';
             }
         }]
     });
@@ -84,22 +97,49 @@ function displayCompanySelection(companies) {
                         await clearObjectStores();
                     }
                     await initializeDatabase();
+
+                    // Laden nur der relevanten Daten
                     loadingStatus.textContent = 'Loading Vertriebler...';
                     await loadVertriebler();
-                    loadingStatus.textContent = 'Loading Telefonbuch...';
-                    await loadTelefonbuch();
+                    loadingStatus.textContent = 'Abgleichen der Mitarbeiternummer...';
+                    const mitarbeiterNr = await getMitarbeiterNr();
+                    if (!mitarbeiterNr) {
+                        alert('Mitarbeiternummer konnte nicht abgerufen werden. Bitte prüfen Sie Ihre E-Mail-Adresse.');
+                    }
                     loadingStatus.textContent = 'Loading Anbahnungen...';
                     await loadAnbahnungen();
-                    loadingStatus.textContent = 'Loading Kunden...';
-                    await loadKunden();
                     loadingStatus.textContent = 'Loading Aufgaben...';
                     await loadAufgaben();
-                    loadingStatus.textContent = 'Loading Aktionen...';
-                    await loadAktionen();
+                    loadingStatus.textContent = 'Loading Mandanten und Branchen...';
+                    await loadBranchenMandanten();
+                    loadingStatus.textContent = 'Loading Gruppen...';
+                    await load_gruppen();
+                    loadingStatus.textContent = 'Loading Ratings...';
+                    await load_ratings();
+                    loadingStatus.textContent = 'Loading Termine...';
+                    await loadTermine();
+                    loadingStatus.textContent = 'Loading Workflows...';
+                    await load_workflows();
+                    loadingStatus.textContent = 'Loading Länder...';
+                    await load_laender();
+                    loadingStatus.textContent = 'Loading Sympathie...';
+                    await load_sympathie();
+                    loadingStatus.textContent = 'Loading KPFunktionen...';
+                    await load_kpfunktionen();
+                    loadingStatus.textContent = 'Loading Grundverloren...';
+                    await load_grundverloren();
+                    loadingStatus.textContent = 'Loading Mitbewerber...';
+                    await load_mitbewerber();
+                    loadingStatus.textContent = 'Loading Klassifizierungen...';
+                    await load_Klassifizierungen();
+                    loadingStatus.textContent = 'Loading Statusschluessel...';
+                    await load_Statusschluessel();
+                    loadingStatus.textContent = 'Loading Aktionsschluessel...';
+                    await load_Aktionsschluessel();
+
                     await setPreviousCompany(selectedCompany);
                 }
-
-                window.location.href = '/CRM/html/menue.html';
+                window.location.href = '../html/menue.html';
             } catch (error) {
                 showErrorModal('Error loading data: ' + error.message);
                 loadingIndicator.style.display = 'none';
@@ -113,7 +153,7 @@ function displayCompanySelection(companies) {
 async function verifyObjectStores() {
     const db = await openIndexedDB();
     return new Promise((resolve, reject) => {
-        const expectedStores = ['vertriebler', 'telefonbuch', 'anbahnungen', 'kunden', 'aufgaben', 'aktionen'];
+        const expectedStores = ['vertriebler', 'anbahnungen', 'aufgaben', 'aktionen'];
         const actualStores = Array.from(db.objectStoreNames);
 
         for (const store of expectedStores) {
@@ -225,12 +265,14 @@ function showErrorModal(message) {
 
     const closeButton = document.createElement('button');
     closeButton.textContent = 'Close';
-    closeButton.addEventListener('click', async () => {
+    closeButton.addEventListener('click', () => {
         modal.remove();
-        await clearIndexedDBAndRedirect();
     });
 
     modal.appendChild(messageElement);
     modal.appendChild(closeButton);
     document.body.appendChild(modal);
 }
+
+
+

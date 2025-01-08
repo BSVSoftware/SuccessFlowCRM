@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neue Aktion - SuccessFlowCRM</title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.914/styles/kendo.default-v2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="../css/neue_aktion.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/kendo.all.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.914/js/cultures/kendo.culture.de-DE.min.js"></script>
+</head>
+<body>
+<header id="header">
+    <button id="menu-button" class="k-button k-primary">
+        <i class="fas fa-bars"></i>
+    </button>
+    <div id="header-title">Neue Aktion</div>
+    <i class="fas fa-home home-icon" id="home-icon"></i>
+    <i class="fas fa-arrow-left back-icon" id="back-icon"></i>
+</header>
+
+<div id="details-container">
+    <form id="aktion-form">
+        <div class="form-group">
+            <label for="MitarbeiterNr">MitarbeiterNr</label>
+            <select id="MitarbeiterNr" name="MitarbeiterNr" class="k-dropdown"></select>
+        </div>
+        <div class="form-group">
+            <label for="Workflow">Workflow</label>
+            <select id="Workflow" name="Workflow" class="k-dropdown"></select>
+        </div>
+        <div class="form-group">
+            <label for="externeInfo">Externe Info</label>
+            <textarea id="externeInfo" name="externeInfo" class="k-textbox"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="interneInfo">Interne Info</label>
+            <textarea id="interneInfo" name="interneInfo" class="k-textbox"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="TerminDatum">Termin Datum</label>
+            <input type="text" id="TerminDatum" name="TerminDatum" class="k-datepicker">
+        </div>
+        <div class="form-group">
+            <label for="TerminZeit">Termin Zeit</label>
+            <input type="text" id="TerminZeit" name="TerminZeit" class="k-timepicker">
+        </div>
+        <div class="buttons">
+            <button type="submit" class="k-button k-primary">Speichern</button>
+            <button type="button" class="k-button" id="cancel-button">Abbrechen</button>
+        </div>
+    </form>
+</div>
+
+<div id="popup-menu" class="k-popup k-group k-reset" style="display:none;">
+    <ul>
+        <li><a href="../html/aktionen.html"><i class="fas fa-tasks"></i> Aktivitäten</a></li>
+        <li><a href="../html/aufgaben.html"><i class="fas fa-check-circle"></i> Aufgaben</a></li>
+    </ul>
+</div>
+
+<script type="module" src="../js/aktionen_details.js"></script>
+<script>
+    document.getElementById('back-icon').addEventListener('click', () => {
+        window.history.back();
+    });
+</script>
+</body>
+</html>

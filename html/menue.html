@@ -1,28 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menue - SuccessFlowCRM</title>
-    <link rel="stylesheet" href="/CRM/css/menue.css">
+    <meta charset="UTF-8" />
+    <!-- Wichtig: meta viewport für mobiles Endgerät -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Menü - SuccessFlowCRM</title>
+
+    <!-- Kendo UI + jQuery -->
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1109/styles/kendo.default-v2.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.3.1109/js/kendo.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Dein eigenes CSS -->
+    <link rel="stylesheet" href="../css/menue.css" />
 </head>
 <body>
+
+<!-- Kopfzeile / Header -->
 <header id="header">
+    <!-- Toggle-Button für das Kendo ResponsivePanel -->
+    <button class="k-rpanel-toggle" id="rpanel-toggle">
+        <i class="k-icon k-i-menu"></i>
+    </button>
+
+    <!-- Titel -->
     <div id="header-title">Menü</div>
-    <i class="fas fa-sync-alt refresh-icon" id="refresh"></i>
+
+    <!-- Refresh-Icon -->
+    <div class="icon-container">
+    <i class="fas fa-sync-alt refresh-icon" id="refresh-icon"></i>
+    </div>
 </header>
-<div id="menu">
-    <ul>
-        <li><a href="/CRM/html/aktionen.html"><i class="fas fa-tasks"></i><span>Aktivitäten</span></a></li>
-        <li><a href="/CRM/html/aufgaben.html"><i class="fas fa-check-circle"></i><span>Aufgaben</span></a></li>
-        <li><a href="/CRM/html/anbahnungen.html"><i class="fas fa-user-plus"></i><span>Anbahnungen</span></a></li>
-        <li><a href="/CRM/html/kunden.html"><i class="fas fa-users"></i><span>Kunden</span></a></li>
-        <li><a href="/CRM/html/phonebook.html"><i class="fas fa-phone"></i><span>Telefonbuch</span></a></li>
-        <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i><span>Abmelden</span></a></li>
-    </ul>
+
+<!-- Container für Sidebar + Hauptinhalt -->
+<div id="layout-container">
+    <!-- Responsive Panel (Seitenmenü) -->
+    <nav id="sidebar">
+        <ul>
+            <li><a href="../html/aktionen.html"><i class="fas fa-tasks"></i><span>Aktionen</span></a></li>
+            <li><a href="../html/aufgaben.html"><i class="fas fa-check-circle"></i><span>Aufgaben</span></a></li>
+            <li><a href="../html/anbahnungen.html"><i class="fas fa-user-plus"></i><span>Anbahnungen</span></a></li>
+            <li><a href="../html/kunden.html"><i class="fas fa-users"></i><span>Kunden</span></a></li>
+            <li><a href="../html/vertraege.html"><i class="fas fa-file-contract"></i><span>Verträge</span></a></li>
+            <li><a href="../html/telefonbuch.html"><i class="fas fa-phone"></i><span>Telefonbuch</span></a></li>
+            <li><a href="../html/tickets.html"><i class="fas fa-ticket-alt"></i><span>Tickets</span></a></li>
+            <!-- Rechnungen ggf. ausblendbar -->
+            <li id="menu-rechnung-li">
+                <a href="../html/rechnungen.html">
+                    <i class="fas fa-file-invoice-dollar"></i><span>Rechnungen</span>
+                </a>
+            </li>
+            <li><a href="../html/termine.html"><i class="fas fa-calendar-alt"></i><span>Termine</span></a></li>
+            <li><a href="../html/company.html"><i class="fas fa-building"></i><span>Unternehmen wechseln</span></a></li>
+            <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i><span>Abmelden</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Hauptinhalt: ein iframe, das z. B. Kundenliste anzeigt -->
+    <main id="content-area">
+        <iframe
+                src="../html/kunden.html"
+                id="frame-content"
+                frameborder="0">
+        </iframe>
+    </main>
 </div>
-<script src="/CRM/js/loaddata.js?v=1.02"></script>
-<script src="/CRM/js/menue.js"></script>
+<div id="loading-spinner"></div>
+<script type="module" src="../js/menue.js"></script>
 </body>
 </html>

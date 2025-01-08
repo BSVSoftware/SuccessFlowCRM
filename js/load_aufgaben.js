@@ -1,15 +1,20 @@
-import { API_URL } from './app.js';
+import { API_URL,APP_RQ } from './app.js';
 import { openIndexedDB } from './indexedDB.js';
 
-export async function loadAufgaben() {
+export async function loadAufgaben(filter = null) {
     try {
         const sid = localStorage.getItem('SID');
-        const response = await fetch(`${API_URL}saRequester&ARGUMENTS=-Agetaufgaben`, {
+        const requestBody = filter ? { AufgabenNr: filter } : null;
+
+        const response = await fetch(`${API_URL}${APP_RQ}&ARGUMENTS=-Agetaufgaben`, {
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json',
                 'SID': sid
-            }
+            },
+            body: requestBody ? JSON.stringify(requestBody) : null
         });
+
         if (!response.ok) {
             if (response.status === 401) {
                 handleUnauthorized();
@@ -17,6 +22,7 @@ export async function loadAufgaben() {
             }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+
         const aufgabenData = await response.json();
         const db = await openIndexedDB();
 
@@ -30,6 +36,13 @@ export async function loadAufgaben() {
                         entry[key] = '';
                     }
                 });
+
+                if (!entry.AufgabenNr) {
+                    return; // Überspringen
+                }
+
+                entry.AnbahnungNr = Number(entry.AnbahnungNr); // Ensure AnbahnungNr is numeric
+                entry.AufgabenNr = Number(entry.AufgabenNr);
                 const request = store.put({
                     TicketNr: entry.TicketNr,
                     Stichwort: entry.Stichwort,
@@ -57,7 +70,15 @@ export async function loadAufgaben() {
                     Modell: entry.Modell,
                     letzteAktionam: entry.letzteAktionam,
                     aktuellerStatus: entry.aktuellerStatus,
-                    aktuelleAktion: entry.aktuelleAktion
+                    aktuelleAktion: entry.aktuelleAktion,
+                    AnbahnungNr: entry.AnbahnungNr,
+                    Termin: entry.Termin, // Add AnbahnungNr
+                    AufgabenNr: entry.AufgabenNr,
+                    KlassifizierungNr: entry.KlassifizierungNr,
+                    Klassifizierung: entry.Klassifizierung,
+                    erledigt: entry.erledigt,
+                    Ersteller: entry.Ersteller,
+                    ErstellerNr: entry.ErstellerNr
                 });
 
                 request.onerror = (event) => {
@@ -78,11 +99,6 @@ export async function loadAufgaben() {
         console.error('Error loading aufgaben data:', error);
         showErrorModal('Error loading aufgaben data: ' + error.message);
     }
-}
-
-function handleUnauthorized() {
-    alert('Ihre Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein.');
-    window.location.href = '/CRM/html/login.html';
 }
 
 function showErrorModal(message) {
@@ -106,7 +122,7 @@ function showErrorModal(message) {
     messageElement.textContent = message;
 
     const closeButton = document.createElement('button');
-    closeButton.textContent = 'Close';
+    closeButton.textContent = 'Schließen';
     closeButton.addEventListener('click', () => {
         modal.remove();
     });
